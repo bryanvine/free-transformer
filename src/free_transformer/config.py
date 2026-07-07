@@ -47,6 +47,13 @@ class FTConfig:
     kappa_bits: float = 0.5          # free-bits threshold per token, in bits (paper best: 0.5)
     zero_init_post_sampler: bool = True  # R == 0 at init => free CE == baseline CE at init
 
+    # --- memory ---
+    # Chunk the lm_head+CE over positions with activation checkpointing so the
+    # (B*T, vocab) logits never materialize at once — the dominant activation
+    # at small scale on 8GB cards. Loss-exact (unit-tested); off by default.
+    chunked_ce: bool = False
+    ce_chunk_tokens: int = 8192
+
     @property
     def head_dim(self) -> int:
         assert self.d_model % self.n_head == 0, "d_model must be divisible by n_head"

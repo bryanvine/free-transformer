@@ -99,6 +99,29 @@ class FreeTransformer(nn.Module):
                 n -= self.lm_head.weight.numel()
         return n
 
+    def _chunked_ce(self, x: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        """Exact CE without materializing full-vocab logits for every position.
+
+        Positions are flattened and processed in chunks; each chunk's
+        lm_head+CE is checkpointed, so backward recomputes one chunk of logits
+        at a time. Sum-reduce per chunk, divide by valid-target count — exactly
+        F.cross_entropy(..., ignore_index=-1) with mean reduction.
+        """
+        h = x.reshape(-1, x.size(-1))
+        t = targets.reshape(-1)
+        valid = (t != -1).sum().clamp(min=1)
+
+        def chunk_loss(h_c, t_c):
+            return F.cross_entropy(self.lm_head(h_c), t_c, ignore_index=-1, reduction="sum")
+
+        total = h.new_zeros((), dtype=torch.float32)
+        step = self.config.ce_chunk_tokens
+        for i in range(0, h.size(0), step):
+            total = total + torch.utils.checkpoint.checkpoint(
+                chunk_loss, h[i : i + step], t[i : i + step], use_reentrant=False
+            ).float()
+        return total / valid
+
     def _latent_from_posterior(self, x_mid: torch.Tensor):
         """Encoder -> ST bits -> (R, kl_nats_per_token, bit_logits)."""
         bit_logits = self.encoder(x_mid, self.cos, self.sin)
@@ -138,10 +161,14 @@ class FreeTransformer(nn.Module):
         x = self.norm_f(x)
 
         if targets is not None:
-            logits = self.lm_head(x)
-            ce = F.cross_entropy(
-                logits.reshape(-1, logits.size(-1)), targets.reshape(-1), ignore_index=-1
-            )
+            if self.config.chunked_ce:
+                logits = None
+                ce = self._chunked_ce(x, targets)
+            else:
+                logits = self.lm_head(x)
+                ce = F.cross_entropy(
+                    logits.reshape(-1, logits.size(-1)), targets.reshape(-1), ignore_index=-1
+                )
             aux["ce"] = ce.detach()
             if kl is not None:
                 kl_term = free_bits_penalty(kl, self.config.kappa_bits)

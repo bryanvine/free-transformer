@@ -125,6 +125,25 @@ def test_encode_latent_probe():
     assert ((p >= 0) & (p <= 1)).all()
 
 
+def test_chunked_ce_is_exact():
+    """Chunked CE must equal full CE in loss AND gradients."""
+    torch.manual_seed(3)
+    x, y = batch()
+    y = y.clone()
+    y[0, :5] = -1  # exercise ignore_index handling
+    losses, grads = [], []
+    for chunked in (False, True):
+        torch.manual_seed(0)
+        m = FreeTransformer(FTConfig(model_type="baseline", **CFG,
+                                     chunked_ce=chunked, ce_chunk_tokens=7))
+        _, loss, _ = m(x, y)
+        loss.backward()
+        losses.append(loss.item())
+        grads.append(m.tok_emb.weight.grad.clone())
+    assert abs(losses[0] - losses[1]) < 1e-5
+    assert torch.allclose(grads[0], grads[1], atol=1e-6)
+
+
 def test_kv_only_injection_changes_output():
     """With a non-zero post-sampler, pinning different Z must change logits."""
     m = tiny("free", zero_init_post_sampler=False)

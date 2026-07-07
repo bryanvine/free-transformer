@@ -14,6 +14,8 @@ model:
   latent_bits: 16
   kappa_bits: 0.5
   inject_layer: -1          # -> layer 6
+  chunked_ce: true          # loss-exact (unit-tested); required for 8GB cards
+  ce_chunk_tokens: 2048
 
 train:
   data_dir: data/fineweb_edu

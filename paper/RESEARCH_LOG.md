@@ -248,3 +248,29 @@ seed instability the paper describes are real and land where it says.
 - Implement posterior-proposal IWAE for tight NLL on the free arm.
 - Arc B70 gets a dedicated window (serving containers paused) for its anchor
   runs — contention discovery documented above.
+
+---
+
+## 2026-07-07 (night) — Arc window post-mortem: killed by a package upgrade; 57.6k tok/s while it lived
+
+The dedicated window (vLLM paused) ran the baseline anchor at full health —
+**57.6k tok/s sustained at dev scale (51M, batch 32×512, eager XPU)**, within
+~20% of the RTX 5060's torch.compile throughput on the same config — until
+minute 28, when **unattended-upgrades upgraded containerd.io (2.2.4→2.2.5)**;
+the containerd service restart SIGKILL'd the training container mid-operation
+(rc=137), the xe driver's GuC reset failed (`reset failed (-ETIMEDOUT)`), and
+the GPU wedged (forcewake MMIO 0xFFFFFFFF) until the next VM power cycle.
+
+Consolidated hardware lesson for BMG-G31 under vfio passthrough (2 wedges,
+1 day, both kill-mid-op): **any ungraceful kill of in-flight Level Zero work
+wedges the GPU unrecoverably** — the driver reset path never succeeds, and
+only a hypervisor-level power cycle (not a guest reboot) restores the device.
+Candidate upstream report for Intel (xe GuC reset failure on BMG-G31/vfio,
+kernel 6.17) — fits this lab's history of filing vllm-xpu-kernels issues.
+Mitigations adopted: never force-kill (already scripted); container-runtime
+package holds during windows (pending owner approval); partial-run artifacts
+survive via checkpoint-resume, so the anchor runs restart where they left off.
+
+Salvage: dev_baseline_s1_xpu reached iter 500+ with a clean loss curve
+(2.17 @ iter 500, matching the CUDA baseline's trajectory) — the resume
+logic continues it in the next window.

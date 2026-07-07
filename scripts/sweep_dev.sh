@@ -31,11 +31,13 @@ if [ "$HOST_KIND" = cuda ]; then
         "free 2 1"     "free 2 2"     "free 2 3"
     )
 else
+    # Dedicated-window share (vLLM paused; see scripts/arc_window.sh): the
+    # cross-backend anchors — one arm each, seed 1, mirroring cuda runs.
+    # kappa {1,2} moved to cuda after the contention descope (RESEARCH_LOG).
     COMPILE=false; BS=32; GA=2
     RUNS=(
-        "free 1 1" "free 1 2" "free 1 3"
-        "free 2 1" "free 2 2" "free 2 3"
         "baseline 0 1"
+        "free 0.5 1"
     )
 fi
 

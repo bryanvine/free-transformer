@@ -27,6 +27,8 @@ if [ "$HOST_KIND" = cuda ]; then
         "free 0.5 1"   "free 0.5 2"   "free 0.5 3"
         "free 0.125 1" "free 0.125 2" "free 0.125 3"
         "free 4 1"     "free 4 2"     "free 4 3"
+        "free 1 1"     "free 1 2"     "free 1 3"
+        "free 2 1"     "free 2 2"     "free 2 3"
     )
 else
     COMPILE=false; BS=32; GA=2

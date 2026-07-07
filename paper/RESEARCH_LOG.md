@@ -142,3 +142,44 @@ plot on the same axes as that study.
 3. **Attribution uncertainty in implementation details**: the arXiv HTML
    extraction may miss appendix specifics; a close PDF read happens before
    the writeup and any deviation found gets an errata entry here.
+
+---
+
+## 2026-07-07 (later) — Phase 1 first results: the ELBO leak, and Arc contention
+
+### The headline lesson: "val loss" is not comparable across arms
+
+All 12 CUDA dev runs (51M, TinyStories, 131M tokens, ~31 min each on the 5060)
+completed cleanly. The logged val losses *looked* sensational for the free
+arm — κ=4 reached 0.61 vs baseline 1.51 — but this is the **posterior
+evaluation leak**: `model(x, y)` computes Z from the encoder, which reads the
+full sequence, so CE-with-posterior-Z is an ELBO-like quantity, not an LM
+loss. CPU spot-check (80 val windows, identical for all models):
+
+| run | CE posterior Z | CE prior Z | KL used |
+|---|---|---|---|
+| baseline s1 | 1.231 | — | — |
+| free κ=0.5 s1 | 1.073 | 1.519 | 0.481 b/tok |
+| free κ=4 s1 | 0.497 | **3.417** | 3.984 b/tok |
+
+κ=4 is an autoencoder: it routes its full ~4-bit budget through Z and
+collapses without the encoder (prior CE 2.8× worse than baseline). This is
+the paper's "cross-entropy collapse" quantified from the generative side.
+Even κ=0.5 pays: single-sample prior CE 1.52 vs baseline 1.23 — but
+single-sample prior CE is only an upper bound on NLL (Jensen). Proper
+comparison = K-sample importance-weighted bound, now in
+`scripts/eval_prior.py` (`--iwae-k`); full-grid GPU eval runs after the
+sweep. Rule from here on: **never compare arms on training/val loss; only on
+prior/IWAE NLL and downstream/generative evals.** (This also means the
+`best.pt` selection criterion is arm-internal only.)
+
+### Arc Pro B70: first sweep attempt hit resource contention
+
+The B70's sweep share ran ~150× slower than its own smoke test (iter 60 of
+4000 after 6h). Suspected cause: the resident vLLM server pre-allocates most
+of the 32GB and the driver silently spills training tensors to host RAM
+rather than OOMing. Decision: killed the container, moved the full κ grid to
+the 5060 (supplementary runs for κ∈{1,2} in flight — total 18 CUDA runs),
+and Arc pretraining gets a **dedicated window** (serving containers paused)
+before any Arc numbers are reported. The "consumer GPU that also serves the
+house" failure mode is itself worklog material.

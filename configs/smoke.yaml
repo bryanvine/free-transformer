@@ -1,0 +1,23 @@
+# 60-second pipeline check: tiny model, few iters. Run once per machine.
+model:
+  vocab_size: 50304
+  block_size: 256
+  n_layer: 4
+  n_head: 4
+  d_model: 256
+  model_type: free
+  latent_bits: 16
+  kappa_bits: 0.5
+
+train:
+  data_dir: data/tinystories
+  out_dir: runs/smoke
+  batch_size: 16
+  grad_accum: 1
+  max_iters: 100
+  warmup_iters: 10
+  eval_interval: 50
+  eval_iters: 10
+  log_interval: 10
+  compile: false
+  resume: false

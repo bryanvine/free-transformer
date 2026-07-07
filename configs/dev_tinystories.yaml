@@ -1,0 +1,25 @@
+# Dev scale (~51M params, TinyStories, ~131M tokens): the kappa x H sweep grid.
+# One run ~= a few hours on the RTX 5060. Override model_type/kappa/seed via --set.
+model:
+  vocab_size: 50304
+  block_size: 512
+  n_layer: 8
+  n_head: 8
+  d_model: 512
+  model_type: baseline      # --set model.model_type=free
+  latent_bits: 16
+  kappa_bits: 0.5
+  inject_layer: -1          # -> layer 4
+
+train:
+  data_dir: data/tinystories
+  out_dir: runs/dev_baseline_s1
+  batch_size: 32
+  grad_accum: 2
+  max_iters: 4000
+  warmup_iters: 200
+  lr: 6.0e-4
+  min_lr: 6.0e-5
+  eval_interval: 250
+  eval_iters: 100
+  seed: 1

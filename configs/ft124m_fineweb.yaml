@@ -1,0 +1,27 @@
+# Headline scale (124M params, FineWeb-Edu 10BT, same backbone as mla-gpt).
+# Full budget = 20k iters (~9.8B tokens) to mirror mla-gpt; early milestones at
+# 5k (~2.5B, Chinchilla-ish). batch_size is per-device; tune grad_accum to keep
+# batch_size * grad_accum * 1024 ~= 491,520 tokens/iter across machines.
+model:
+  vocab_size: 50304
+  block_size: 1024
+  n_layer: 12
+  n_head: 12
+  d_model: 768
+  model_type: baseline      # --set model.model_type=free
+  latent_bits: 16
+  kappa_bits: 0.5
+  inject_layer: -1          # -> layer 6
+
+train:
+  data_dir: data/fineweb_edu
+  out_dir: runs/ft124m_baseline_s1
+  batch_size: 12
+  grad_accum: 40
+  max_iters: 20000
+  warmup_iters: 400
+  lr: 6.0e-4
+  min_lr: 6.0e-5
+  eval_interval: 500
+  eval_iters: 100
+  seed: 1

@@ -1,0 +1,105 @@
+# Research Log — free-transformer
+
+A controlled small-scale study of The Free Transformer (Fleuret,
+arXiv:2510.17558). Live document; newest entries at the bottom. Written for
+future-us and for readers of the eventual paper: every design decision,
+deviation, and result — including the ones that don't work — gets recorded
+here with dates.
+
+---
+
+## 2026-07-07 — Phase 0: topic selection, design decisions, scaffold
+
+### Why this topic
+
+A six-report survey of the Jan–Jul 2026 frontier (architecture, training
+efficiency, indie-research landscape, consumer-hardware feasibility, data/
+sample-efficiency, speedrun ecosystem) surfaced the Free Transformer as the
+highest novelty-per-effort target: a famous, simple, load-bearing idea from a
+frontier lab with — as far as extensive searching can establish — **zero
+public independent replications nine months after publication**. It fits this
+lab's brand (single-variable controlled studies, honest negatives, consumer
+hardware) and this lab's existing mla-gpt backbone directly.
+
+### Research questions
+
+1. **RQ1 (replication):** at 124M/matched tokens, free vs baseline vs
+   params-matched 13L baseline, N≥3 seeds, error bars. The 13L control is our
+   addition: the encoder block is ~+6% params at this scale, so "is it the
+   latent or the extra block?" is a live confound the paper's scale made
+   negligible.
+2. **RQ2 (what is Z):** bit-level probes (topic/style/length/sentiment),
+   steering by pinning Z during generation, per-Z sample diversity.
+3. **RQ3 (stability map):** κ ∈ {1/8, 1/2, 1, 2, 4} bits × H ∈ {4, 16} at dev
+   scale; where does posterior collapse / KL-crash happen at 51M?
+
+### Implementation decisions (and why)
+
+- **Factored bit-embedding, not a 2^16 one-hot table.** The paper formalizes
+  Z_t as one-hot over 2^16 with a "linear post-sampler". A literal 2^16×d
+  table (a) cannot receive straight-through gradients tractably — ST works at
+  the bit level; a hard joint index would need REINFORCE/Gumbel over 65,536
+  categories or a (B,T,65536) soft one-hot, both absurd here — and (b) is
+  ruled out by the paper's own overhead numbers: at 8B, "3.1%" matches one
+  extra Llama-style block (~220M params), not a 268M-param table on top of
+  it. So: R = W·(2Z−1), W ∈ R^{d×H}. Flagged for verification against the
+  paper's pseudocode when we do the close read for the writeup.
+- **±1 bit encoding** into the post-sampler (not {0,1}): under the uniform
+  prior E[2Z−1]=0, so random Z injects zero-mean signal.
+- **Zero-init post-sampler**: R=0 at init ⇒ the free model's CE starts
+  exactly at the baseline's (unit-tested equivalence). Mirrors the backbone's
+  zero-ish residual-projection init philosophy and removes early-training
+  shock from random Z.
+- **K/V-only injection** at block L/2: queries see X, keys/values see X+R,
+  exactly per the paper's stated wiring. Unit test pins it.
+- **Encoder queries = ζ + RoPE.** All positions share the learned query
+  embedding; position identity enters only via RoPE on Q — the paper's
+  "prevents token-wise mapping" device. Content reaches the latent only
+  through attention values over mid-depth activations.
+- **Posterior-prefill at generation:** conditioning text gets Z ~ Q(Z|prompt)
+  (sampled, matching training); each newly generated position draws Z from
+  the prior. `z_bits` overrides everything (the steering knob).
+- **KL in nats internally, reported in bits/token.** Free-bits hinge is the
+  paper's Eq. 5: mean over tokens of max(0, KL_t − κ).
+- **Known paper pathologies to instrument, not discover twice:** KL rapidly
+  falling under κ and staying there; unstable performance curves (encoder/
+  decoder coupling); collapse at κ=4 bits. metrics.csv logs val CE and KL
+  (bits/token) separately at every eval.
+
+### Experiment plan
+
+| Phase | What | Where | Status |
+|---|---|---|---|
+| 0 | scaffold, tests, smoke (this entry) | 5060 | done when pushed |
+| 1 | dev sweep: {baseline, free×κ∈{.125,.5,1,2,4}} × 3 seeds, 51M/TinyStories | 5060 + 4080S | next |
+| 1b | same smoke + 1 dev run on Arc B70 (first documented Arc pretraining) | B70 | next |
+| 2 | headline: {baseline-12L, baseline-13L, free} × 3 seeds, 124M/FineWeb-Edu ~2.5B tok | 4080S + B70 + weekend RTX 6000 Pro; PACE-ICE if needed | pending |
+| 3 | RQ2 probes + steering demos on the best free checkpoint | 5060 | pending |
+| 4 | writeup: paper page + LinkedIn series | — | pending |
+
+Rigor standards for every reported comparison: ≥3 seeds, mean ± range,
+identical data order where the harness allows, config + commit hash + seed in
+every results row, negative results reported.
+
+### Hardware notes
+
+- 5060 (8GB, cu130): primary dev; batch 12 × accum 40 at 1024 ctx planned for
+  124M — verify in smoke.
+- Arc Pro B70 (32GB, xpu): torch 2.11.0+xpu confirmed working inside the
+  `vllm-xpu` container (needs `source /opt/intel/oneapi/setvars.sh`). Known
+  XPU caveats to expect: fatal (non-recoverable) OOM errors, possible Triton
+  autotune issues under torch.compile — fall back to eager if needed.
+- RTX 6000 Pro 96GB: weekends only — reserve for the 3-seed headline batch.
+
+### Risks
+
+1. **Effect invisible at 124M on val loss.** Mitigation: the paper's gains
+   were on downstream/generative tasks, not raw ppl — RQ2's probes and
+   structured-generation evals are first-class, and "no effect at small
+   scale, here's the noise floor" is a publishable finding (cf. the
+   modifications-don't-transfer literature, arXiv:2605.20798).
+2. **VAE fiddliness** (collapse, dead bits): κ/H sweep is Phase 1, not an
+   afterthought; KL trace logged from day one.
+3. **Attribution uncertainty in implementation details**: the arXiv HTML
+   extraction may miss appendix specifics; a close PDF read happens before
+   the writeup and any deviation found gets an errata entry here.

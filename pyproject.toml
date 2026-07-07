@@ -1,0 +1,25 @@
+[project]
+name = "free-transformer"
+version = "0.1.0"
+description = "The Free Transformer (Fleuret, arXiv:2510.17558) vs a matched GPT baseline: a controlled small-scale replication study"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.7",
+    "numpy>=1.26",
+    "tiktoken>=0.7",
+    "datasets>=2.20",
+    "tqdm>=4.66",
+    "pyyaml>=6.0",
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/free_transformer"]

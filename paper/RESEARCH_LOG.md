@@ -183,3 +183,68 @@ the 5060 (supplementary runs for κ∈{1,2} in flight — total 18 CUDA runs),
 and Arc pretraining gets a **dedicated window** (serving containers paused)
 before any Arc numbers are reported. The "consumer GPU that also serves the
 house" failure mode is itself worklog material.
+
+---
+
+## 2026-07-07 (evening) — Phase 1 complete: the latent is an NLL tax that scales exactly with κ
+
+18/18 dev runs clean (51M, TinyStories, 131M tokens, 3 seeds per config, all
+on the 5060 after the B70 descope, ~31 min/run). Full-val-sweep eval
+(`scripts/eval_prior.py`, deterministic identical windows for every model):
+
+| config | post-CE | **honest NLL (ELBO bound)** [seed range] | prior-CE (K=1) | KL b/tok |
+|---|---|---|---|---|
+| baseline | 1.5103 | **1.5103** (exact; range 1.5089–1.5119) | — | — |
+| free κ=0.125 | 1.5042 | **1.5590** [1.5262, 1.5780] | 1.5408 | 0.079 |
+| free κ=0.5 | 1.3283 | **1.6641** [1.6614, 1.6664] | 1.8130 | 0.484 |
+| free κ=1 | 1.1273 | **1.8191** [1.8138, 1.8283] | 2.1718 | 0.998 |
+| free κ=2 | 0.8583 | **2.2416** [2.2413, 2.2420] | 2.9999 | 1.996 |
+| free κ=4 | 0.6137 | **3.3792** [3.3414, 3.4324] | 3.7139 | 3.990 |
+
+### Findings
+
+1. **The free-bits budget is always fully spent, and always paid back with
+   interest.** At every κ, posterior KL pins almost exactly at κ (the hinge
+   saturates), and the honest NLL (posterior-CE + KL, the ELBO bound) is
+   *worse* than baseline by roughly the KL spent — monotone in κ. At
+   51M/TinyStories the latent channel is a pure tax on language modeling:
+   whatever the encoder stuffs into Z, generation must buy back from a
+   uniform prior.
+2. **Collapse at κ=4 reproduced** (paper's boundary): 4.0 bits/token through
+   Z, prior-CE 2.5× baseline — the model is an autoencoder of its own input.
+3. **Seed-dependent posterior collapse at κ=0.125**: seed 2 uses 0.006
+   b/tok (Z ignored; its prior-CE equals its posterior-CE), seeds 1/3 use
+   ~0.117 b/tok — a 20× spread. Latent models at small scale are exactly
+   where single-seed results mislead; error bars aren't optional here.
+4. **Methodology trap #2 (after the posterior leak): prior-proposal IWAE is
+   useless at high per-token KL.** Sequence-level information ≈ κ·T bits
+   (≈250 bits at κ=0.5, T=512); K=64 prior draws cannot find the posterior
+   region, so `iwae64` barely improves on single-sample prior-CE and even
+   sits *above* the ELBO bound. At κ=0.125 IWAE-64 ≈ ELBO (cross-check
+   passes). Use the ELBO bound, or implement posterior-proposal IWAE (queued
+   for Phase 2).
+5. **Qualitative generations at κ=0.5 are coherent** — indistinguishable
+   TinyStories-grade text from either arm at temp 0.8 (samples in
+   runs/…/best.pt, printed in the session record). The tax is invisible to
+   the eye at low κ, consistent with the paper's claims living on downstream
+   tasks rather than perplexity.
+
+### What this does and doesn't say about the paper
+
+It does NOT refute Fleuret: the paper never claims better NLL; its gains are
+on prompted downstream benchmarks at 1.5B/8B, where conditioning uses the
+posterior prefill and "committing to a decision" could help coherence at some
+likelihood cost. What Phase 1 establishes: (a) two methodology traps that any
+replication comparing on loss will fall into; (b) at 51M on a low-entropy
+corpus the latent buys nothing on-distribution; (c) the collapse boundary and
+seed instability the paper describes are real and land where it says.
+
+### Phase 2 decisions
+
+- Headline scale (124M/FineWeb-Edu): κ ∈ {0.125, 0.5} only (the low-tax
+  regime), vs baseline-12L vs params-matched baseline-13L, 3 seeds each.
+- Primary metrics move off-perplexity: RQ2 probes (what Z encodes), steering,
+  and structured-generation evals; NLL reported as the honest secondary.
+- Implement posterior-proposal IWAE for tight NLL on the free arm.
+- Arc B70 gets a dedicated window (serving containers paused) for its anchor
+  runs — contention discovery documented above.

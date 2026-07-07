@@ -91,6 +91,45 @@ every results row, negative results reported.
   autotune issues under torch.compile — fall back to eager if needed.
 - RTX 6000 Pro 96GB: weekends only — reserve for the 3-seed headline batch.
 
+### Param audit (verified on scaffold day)
+
+| Scale | baseline | free | baseline+1L |
+|---|---|---|---|
+| dev (8L/512d) | 51,454,464 | 54,684,688 (+6.28%) | 54,666,752 (+6.24%) |
+| headline (12L/768d) | 123,587,328 | 130,693,648 (+5.75%) | 130,666,752 (+5.73%) |
+
+The +1-layer baseline params-matches the free model to within 0.02% at both
+scales — a clean "latent vs. extra depth" control. The 12L baseline is
+byte-identical in param count to mla-gpt's MHA arm (123,587,328), so results
+plot on the same axes as that study.
+
+### Phase 0 smoke results (same day)
+
+- **Tests**: 11/11 pass. The suite caught one real bug during development: the
+  straight-through estimator must be written `hard + (p - p.detach())` —
+  left-to-right `(hard + p) - p.detach()` returns values like 0.99999994
+  instead of exact bits (float associativity).
+- **RTX 5060 (cu130), 17M smoke**: loss 10.84→4.73 in 100 iters, 64k tok/s
+  eager. KL trace already shows the paper's pathology in miniature: 0.26b →
+  0.48b → 0.02b within 100 iters — the collapse instrument works.
+- **RTX 5060, 124M free w/ torch.compile**: peak 4.78 GiB at batch 4×1024ctx
+  (with an unrelated 1.5 GiB llama-server resident). batch 8-12 OOMs on the
+  full-vocab logits/backward; fix queued: chunked cross-entropy. Free-bits
+  arithmetic verified in the wild: at init KL=0.748b > κ=0.5b and
+  loss−CE = (0.748−0.5)·ln2 exactly.
+- **Arc Pro B70 (torch 2.11+xpu, throwaway `intel/vllm:latest` container),
+  17M smoke**: identical code path via `device: auto`, loss 10.84→4.731
+  (CUDA got 4.732, same seed — cross-backend agreement to ~3 decimals),
+  13.8k tok/s eager, peak 2.56 GiB / 32 GiB. Per the Phase-0 survey, no
+  public record of LLM pretraining on Arc B-series exists — these are
+  plausibly the first documented Arc Pro B70 pretraining steps. Container
+  recipe: `docker run --rm --device /dev/dri --group-add 992 --group-add 44
+  -v ~/free-transformer:/work -w /work intel/vllm:latest` + `source
+  /opt/intel/oneapi/setvars.sh`.
+- 124M on the 5060 at ~45k tok/s (steady-state est.) ⇒ a 2.5B-token
+  milestone ≈ 15h/run; the κ sweep belongs at dev scale, headline seeds on
+  the 4080S / B70 / weekend RTX 6000 Pro.
+
 ### Risks
 
 1. **Effect invisible at 124M on val loss.** Mitigation: the paper's gains

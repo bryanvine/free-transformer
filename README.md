@@ -91,8 +91,13 @@ paper/             # RESEARCH_LOG.md (live) -> eventual paper
 
 ## Status
 
-**Phase 0 — scaffold + smoke tests.** Follow the
-[research log](paper/RESEARCH_LOG.md). Results tables will land here as runs
+**Phase 0 complete (2026-07-07)** — scaffold, 11/11 correctness tests, smoke
+training verified on **both** backends the same day: RTX 5060 (124M free
+model under torch.compile, 4.8 GiB peak) and Arc Pro B70 (identical code via
+`device: auto`; as far as public record shows, the first documented LLM
+pretraining steps on Arc B-series silicon). Cross-backend val loss agrees to
+~3 decimals at matched seed. Next: the dev-scale κ×H sweep. Follow the
+[research log](paper/RESEARCH_LOG.md); results tables land here as runs
 complete.
 
 ## Related work by the same author

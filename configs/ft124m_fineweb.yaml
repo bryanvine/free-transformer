@@ -2,6 +2,8 @@
 # Full budget = 20k iters (~9.8B tokens) to mirror mla-gpt; early milestones at
 # 5k (~2.5B, Chinchilla-ish). batch_size is per-device; tune grad_accum to keep
 # batch_size * grad_accum * 1024 ~= 491,520 tokens/iter across machines.
+# RTX 5060 8GB: use --set train.batch_size=4 train.grad_accum=120 and export
+# PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True (measured peak 4.8 GiB).
 model:
   vocab_size: 50304
   block_size: 1024

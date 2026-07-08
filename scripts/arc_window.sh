@@ -21,11 +21,15 @@ restore() {
     docker stop -t 60 ft-sweep >/dev/null 2>&1   # graceful if still running
     docker rm ft-sweep >/dev/null 2>&1
     docker start vllm-xpu >/dev/null 2>&1
-    echo "[restore] vllm-xpu start issued $(date -Is)" >> "$LOG"
+    sudo systemctl start apt-daily.timer apt-daily-upgrade.timer 2>/dev/null
+    echo "[restore] vllm-xpu start issued, apt timers resumed $(date -Is)" >> "$LOG"
 }
 trap restore EXIT
 
 echo "[window] open $(date -Is)" >> "$LOG"
+# An unattended containerd upgrade mid-window SIGKILLed training and wedged
+# the GPU (2026-07-07). Pause the apt timers for the window; trap restores.
+sudo systemctl stop apt-daily.timer apt-daily-upgrade.timer 2>/dev/null
 # repair runs/ ownership (containers write as root; host-side tools need access)
 docker run --rm -v "$PWD":/work intel/vllm:latest chown -R 1000:1000 /work/runs /work/arc_window.log 2>/dev/null
 docker stop -t 120 vllm-xpu >> "$LOG" 2>&1

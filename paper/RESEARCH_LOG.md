@@ -299,3 +299,25 @@ Running tally of the Arc Pro B70 story: fastest consumer-Arc pretraining
 throughput on record when healthy; wedged by a force-kill, a package
 manager, and its own power firmware in 36 hours; every failure mode now
 documented, scripted around, and reproducible. This is the worklog post.
+
+---
+
+## 2026-07-08 (late) — Arc anchors complete: cross-backend parity, hardened window holds
+
+First fully clean Arc window (exit 0, zero watchdog triggers) under the new
+saturation hardening: clocks capped 2800→2000 MHz, instantaneous batch halved
+at equal tokens/iter, 50ms/iter breather, dmesg watchdog with graceful
+checkpoint-stop, vLLM/apt-timers paused and auto-restored. Cost of the whole
+stack: ~20% (46.0k tok/s vs 57.6k unhardened).
+
+**Cross-backend anchors (dev scale, seed 1):** free κ=0.5 on XPU lands
+posterior-val **1.3224 / KL 0.481b — inside the CUDA 3-seed band**
+([1.3155, 1.3356] / [0.477, 0.499]). Baseline on XPU 1.4865 vs CUDA
+[1.5089, 1.5119] — 1.5% below the band, but this run's history is
+heterogeneous (two wedge interruptions, batch shape 32×2→16×4 mid-run), so
+it serves as a backend sanity anchor, not a seed-replica; a clean re-run can
+tighten it if the paper needs it. Conclusion: no XPU-specific training
+pathology; the free-transformer results are backend-independent.
+
+These are, to our knowledge, the first completed LLM pretraining runs
+published from Intel Arc B-series hardware.

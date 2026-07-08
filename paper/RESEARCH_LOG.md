@@ -274,3 +274,28 @@ survive via checkpoint-resume, so the anchor runs restart where they left off.
 Salvage: dev_baseline_s1_xpu reached iter 500+ with a clean loss curve
 (2.17 @ iter 500, matching the CUDA baseline's trajectory) — the resume
 logic continues it in the next window.
+
+---
+
+## 2026-07-08 — Arc window 2 post-mortem: the GPU that came back without its power brain
+
+The resumed window ran correctly but at **~1.1k tok/s** (50× under the same
+card's healthy 57.6k) with zero contention. Live sysfs forensics: `cur/min/
+max_freq` return empty reads, `act_freq` reports an impossible 8517 MHz,
+package temperature reads the 255°C sentinel, energy 0.00 J, GT throttle
+status stuck at 1. Diagnosis: the cold boot revived command submission but
+**PCODE's power-management interface never came back** — the card is locked
+at a low safe clock and all PM telemetry is garbage. Frequency writes are
+accepted but ignored. Window closed early (checkpoint at iter 2740/4000
+preserved; vLLM + apt timers auto-restored). Next escalation: full power
+drain (PSU off ≥60s) and, if the state recurs, a GSC firmware check.
+
+Robustness fix landed as a result: `docker stop` now reaches the trainer —
+SIGTERM handler checkpoints and exits 0 at the iteration boundary
+(verified live), with bash signal-forwarding in sweep_dev.sh (bash-as-PID1
+was swallowing the signal, turning every "graceful" stop into a SIGKILL).
+
+Running tally of the Arc Pro B70 story: fastest consumer-Arc pretraining
+throughput on record when healthy; wedged by a force-kill, a package
+manager, and its own power firmware in 36 hours; every failure mode now
+documented, scripted around, and reproducible. This is the worklog post.

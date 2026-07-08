@@ -14,6 +14,7 @@ from __future__ import annotations
 import csv
 import json
 import math
+import signal
 import time
 from contextlib import nullcontext
 from dataclasses import dataclass, asdict
@@ -167,10 +168,35 @@ def run_training(model_cfg: FTConfig, tc: TrainConfig) -> dict:
     print(f"[{tc.out_dir}] {model_cfg.model_type} | params={raw_model.num_params():,} "
           f"| device={tc.device} | tok/iter={tokens_per_iter:,}")
 
+    # SIGTERM -> finish the current iteration, checkpoint, exit 0. Abrupt
+    # kills mid-GPU-op wedge the Arc B70 (see RESEARCH_LOG 2026-07-07/08);
+    # this plus signal-forwarding in sweep_dev.sh makes `docker stop` safe.
+    stop_flag = {"v": False}
+
+    def _on_term(signum, frame):  # pragma: no cover - signal timing
+        stop_flag["v"] = True
+        print("[signal] SIGTERM: will checkpoint and exit at iteration boundary", flush=True)
+
+    try:
+        signal.signal(signal.SIGTERM, _on_term)
+    except ValueError:  # not in main thread (e.g. under some test runners)
+        pass
+
+    def save_resume_ckpt(it: int) -> None:
+        torch.save({"model": raw_model.state_dict(), "optimizer": optimizer.state_dict(),
+                    "iter": it, "best_val": best_val,
+                    "cpu_rng": torch.get_rng_state(),
+                    "cuda_rng": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
+                    "model_cfg": model_cfg.to_dict()}, ckpt_path)
+
     t0 = time.time()
     x, y = get_batch("train", tc.batch_size)
     running = None
     for it in range(start_iter, tc.max_iters + 1):
+        if stop_flag["v"]:
+            save_resume_ckpt(it)
+            print(f"[signal] checkpointed at iter {it}; exiting cleanly", flush=True)
+            break
         lr = _lr_at(it, tc)
         for g in optimizer.param_groups:
             g["lr"] = lr
@@ -191,11 +217,7 @@ def run_training(model_cfg: FTConfig, tc: TrainConfig) -> dict:
                 best_val = min(best_val, losses["val"])
                 torch.save({"model": raw_model.state_dict(), "model_cfg": model_cfg.to_dict(),
                             "iter": it, "val_loss": losses["val"]}, out_dir / "best.pt")
-            torch.save({"model": raw_model.state_dict(), "optimizer": optimizer.state_dict(),
-                        "iter": it, "best_val": best_val,
-                        "cpu_rng": torch.get_rng_state(),
-                        "cuda_rng": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
-                        "model_cfg": model_cfg.to_dict()}, ckpt_path)
+            save_resume_ckpt(it)
 
         if it == tc.max_iters:
             break

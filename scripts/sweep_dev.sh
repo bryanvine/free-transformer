@@ -56,11 +56,19 @@ for spec in "${RUNS[@]}"; do
         continue
     fi
     echo "[run] ${NAME} ($(date +%H:%M))"
+    # Run in background + wait, with SIGTERM forwarded to the trainer so
+    # `docker stop` reaches python's checkpoint-and-exit handler (bash as
+    # PID 1 would otherwise swallow the signal and the grace period would
+    # end in SIGKILL mid-GPU-op — which wedges the B70).
     "$PY" scripts/train.py "$CFG" --set $EXTRA \
         train.seed="$SEED" train.out_dir="runs/${NAME}" \
         train.compile="$COMPILE" train.batch_size="$BS" train.grad_accum="$GA" \
-        > "runs/${NAME}.log" 2>&1
+        > "runs/${NAME}.log" 2>&1 &
+    CHILD=$!
+    trap 'kill -TERM $CHILD 2>/dev/null; wait $CHILD; exit 143' TERM INT
+    wait "$CHILD"
     RC=$?
+    trap - TERM INT
     printf '%s\t%s\t%s\n' "$NAME" "$RC" "$(date -Is)" >> "$STATUS"
     echo "[exit ${RC}] ${NAME}"
 done

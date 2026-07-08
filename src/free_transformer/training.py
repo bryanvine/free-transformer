@@ -54,6 +54,10 @@ class TrainConfig:
     dtype: str = "bfloat16"
     compile: bool = True
     resume: bool = True
+    # Duty-cycle breather: sleep this long after each optimizer step. Used on
+    # the Arc Pro B70, which crashes under sustained saturation (see
+    # RESEARCH_LOG 2026-07-08); ~5-10% throughput for a large stability margin.
+    iter_sleep_s: float = 0.0
 
 
 def resolve_device(device: str) -> str:
@@ -234,6 +238,8 @@ def run_training(model_cfg: FTConfig, tc: TrainConfig) -> dict:
         scaler.step(optimizer)
         scaler.update()
         optimizer.zero_grad(set_to_none=True)
+        if tc.iter_sleep_s > 0:
+            time.sleep(tc.iter_sleep_s)
 
         running = loss.item() * tc.grad_accum if running is None else \
             0.9 * running + 0.1 * loss.item() * tc.grad_accum

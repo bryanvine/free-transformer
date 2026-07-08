@@ -19,6 +19,7 @@ CFG=configs/dev_tinystories.yaml
 STATUS="runs/sweep_status_${HOST_KIND}.tsv"
 mkdir -p runs
 
+EXTRA_TRAIN=""
 if [ "$HOST_KIND" = cuda ]; then
     export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
     COMPILE=true;  BS=16; GA=4
@@ -34,7 +35,11 @@ else
     # Dedicated-window share (vLLM paused; see scripts/arc_window.sh): the
     # cross-backend anchors — one arm each, seed 1, mirroring cuda runs.
     # kappa {1,2} moved to cuda after the contention descope (RESEARCH_LOG).
-    COMPILE=false; BS=32; GA=2
+    # Saturation hardening (the B70 crashes under sustained peak load, cf.
+    # the c>14 serving crashes): halved instantaneous batch (same tokens/
+    # iter) + 50ms/iter breather; arc_window.sh additionally caps clocks.
+    COMPILE=false; BS=16; GA=4
+    EXTRA_TRAIN="train.iter_sleep_s=0.05"
     RUNS=(
         "baseline 0 1"
         "free 0.5 1"
@@ -60,7 +65,7 @@ for spec in "${RUNS[@]}"; do
     # `docker stop` reaches python's checkpoint-and-exit handler (bash as
     # PID 1 would otherwise swallow the signal and the grace period would
     # end in SIGKILL mid-GPU-op — which wedges the B70).
-    "$PY" scripts/train.py "$CFG" --set $EXTRA \
+    "$PY" scripts/train.py "$CFG" --set $EXTRA $EXTRA_TRAIN \
         train.seed="$SEED" train.out_dir="runs/${NAME}" \
         train.compile="$COMPILE" train.batch_size="$BS" train.grad_accum="$GA" \
         > "runs/${NAME}.log" 2>&1 &

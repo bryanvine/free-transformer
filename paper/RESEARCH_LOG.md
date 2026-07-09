@@ -321,3 +321,28 @@ pathology; the free-transformer results are backend-independent.
 
 These are, to our knowledge, the first completed LLM pretraining runs
 published from Intel Arc B-series hardware.
+
+---
+
+## 2026-07-09 — Headline surprise: the latent collapses at 124M on FineWeb-Edu
+
+free κ=0.5 s1 at 124M/2.46B tokens: best val **3.1968** — but **KL collapsed
+to ~0.001 b/tok** (trace: 0.73 @ init → 0.068 @ 1k → 0.002 @ 2k → dead).
+The model is effectively a 130.7M-param plain GPT that ignores its latent.
+Contrast dev scale, where κ=0.5 held 0.48 b/tok on 3/3 seeds: **collapse is
+scale/data-dependent** (TinyStories' low-entropy structure gives Z early
+utility; FineWeb-Edu at 124M does not — CE optimization drowns the encoder
+before it finds a use). Note the free-bits hinge is one-sided: it stops the
+KL *penalty* below κ but provides no pressure keeping Z alive.
+
+Consequences:
+- baseline (123.6M): 3.2092 · free-collapsed (130.7M): 3.1968 — the gap is
+  now a pure +6%-params effect. The **params-matched 13L control (130.67M)
+  is the deciding run** — launched (s1, same budget).
+- The paper's 1.5B/8B runs at κ=0.5 did NOT collapse (KL pinned at κ). Open
+  question for the writeup: what keeps Z alive at scale — model capacity,
+  data richness, tokens, or luck of the seed (cf. our dev κ=0.125 seed
+  split)? Candidate follow-ups: κ=1 at 124M (more free bits early), KL
+  warmup schedules, encoder LR multiplier.
+- Since Z carries ~nothing, this run's val loss is honest (no posterior
+  leak) — directly comparable to baselines.

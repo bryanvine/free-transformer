@@ -24,10 +24,13 @@ if [ -f "runs/${NAME}/summary.json" ]; then
     exit 0
 fi
 echo "[run] ${NAME} ($(date +%H:%M))"
+# compile=true + batch 32: eager at batch 16 measured 8.2k tok/s with one
+# host core pegged (dispatch-bound); compile fuses the graph and batch 32
+# halves launches. Same 491,520 tokens/iter (32 x 15 x 1024).
 python3 scripts/train.py configs/ft124m_fineweb.yaml --set $EXTRA \
     model.chunked_ce=false \
     train.seed="$SEED" train.out_dir="runs/${NAME}" \
-    train.compile=false train.batch_size=16 train.grad_accum=30 \
+    train.compile=true train.batch_size=32 train.grad_accum=15 \
     train.iter_sleep_s=0.05 train.max_iters=5000 "$@" \
     > "runs/${NAME}.log" 2>&1 &
 CHILD=$!

@@ -12,7 +12,9 @@
 # GPU (forcewake MMIO reads of 0xFFFFFFFF) and only a reboot recovered it.
 # Always `docker stop -t 60` first so training gets SIGTERM and exits.
 #
-# Usage (on the b70): nohup bash scripts/arc_window.sh >/dev/null 2>&1 &
+# Usage (on the b70): nohup bash scripts/arc_window.sh [inner cmd...] >/dev/null 2>&1 &
+# Extra args are forwarded to b70_sweep_entry.sh (default: the dev sweep),
+# e.g.: nohup bash scripts/arc_window.sh scripts/run_xpu_124m.sh free 1 1 &
 set -u
 cd "$(dirname "$0")/.."
 LOG="$PWD/arc_window.log"   # repo root: bryan-writable (runs/ may be root-owned)
@@ -57,5 +59,5 @@ docker rm ft-sweep >/dev/null 2>&1
 echo "[window] training start $(date -Is)" >> "$LOG"
 docker run --name ft-sweep --device /dev/dri --group-add 992 --group-add 44 \
     -v "$PWD":/work -w /work intel/vllm:latest \
-    bash scripts/b70_sweep_entry.sh >> "$LOG" 2>&1
+    bash scripts/b70_sweep_entry.sh "$@" >> "$LOG" 2>&1
 echo "[window] training container exited (rc=$?) $(date -Is)" >> "$LOG"

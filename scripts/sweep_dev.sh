@@ -32,28 +32,33 @@ if [ "$HOST_KIND" = cuda ]; then
         "free 2 1"     "free 2 2"     "free 2 3"
     )
 else
-    # Dedicated-window share (vLLM paused; see scripts/arc_window.sh): the
-    # cross-backend anchors — one arm each, seed 1, mirroring cuda runs.
-    # kappa {1,2} moved to cuda after the contention descope (RESEARCH_LOG).
+    # Dedicated-window share (vLLM paused; see scripts/arc_window.sh).
     # Saturation hardening (the B70 crashes under sustained peak load, cf.
     # the c>14 serving crashes): halved instantaneous batch (same tokens/
     # iter) + 50ms/iter breather; arc_window.sh additionally caps clocks.
+    # Current list: RQ3 latent-width sweep (H in {4,8} x 3 seeds + H=16
+    # seeds 2-3 for an all-XPU H comparison; H=16 s1 done as the anchor)
+    # and kappa=0.125 seeds 4-6 for the collapse-rate estimate.
     COMPILE=false; BS=16; GA=4
     EXTRA_TRAIN="train.iter_sleep_s=0.05"
     RUNS=(
-        "baseline 0 1"
-        "free 0.5 1"
+        "free 0.5 1 4"  "free 0.5 2 4"  "free 0.5 3 4"
+        "free 0.5 1 8"  "free 0.5 2 8"  "free 0.5 3 8"
+        "free 0.5 2 16" "free 0.5 3 16"
+        "free 0.125 4"  "free 0.125 5"  "free 0.125 6"
     )
 fi
 
 for spec in "${RUNS[@]}"; do
-    read -r ARM KAPPA SEED <<<"$spec"
+    read -r ARM KAPPA SEED H <<<"$spec"
+    H="${H:-16}"
     if [ "$ARM" = baseline ]; then
         NAME="dev_baseline_s${SEED}"
         EXTRA="model.model_type=baseline"
     else
-        NAME="dev_free_k${KAPPA}_s${SEED}"
-        EXTRA="model.model_type=free model.kappa_bits=${KAPPA}"
+        HTAG=""; [ "$H" != 16 ] && HTAG="_H${H}"
+        NAME="dev_free_k${KAPPA}${HTAG}_s${SEED}"
+        EXTRA="model.model_type=free model.kappa_bits=${KAPPA} model.latent_bits=${H}"
     fi
     [ "$HOST_KIND" = xpu ] && NAME="${NAME}_xpu"
     if [ -f "runs/${NAME}/summary.json" ]; then

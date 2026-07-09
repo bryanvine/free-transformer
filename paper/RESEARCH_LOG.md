@@ -346,3 +346,29 @@ Consequences:
   warmup schedules, encoder LR multiplier.
 - Since Z carries ~nothing, this run's val loss is honest (no posterior
   leak) — directly comparable to baselines.
+
+---
+
+## 2026-07-09 — B70 at 124M×1024: eager is dispatch-bound, compile hits the autotune storm
+
+Attempted the 124M κ=1 arm on the B70 in a hardened window. Two failure
+modes, both instructive:
+
+1. **Eager, batch 16×30**: 8.2k tok/s steady (vs ~15-19k expected by scaling
+   the dev-scale 46k) with one host core pegged at ~91% — eager XPU dispatch
+   is co-limiting at 124M×1024ctx on this 12-vCPU VM. Window would run ~83h
+   (authorized: 30h).
+2. **torch.compile, batch 32×15**: compiled and trained 10 real iterations,
+   then fell into an Inductor/Triton-XPU **autotune-recompile storm** —
+   python at 100% CPU generating variants, GPU busy benchmarking them, zero
+   iterations in 45+ min. Matches the known BMG autotuner breakage
+   (intel-xpu-backend-for-triton #6367 class). No crash, no GPU errors —
+   just a compiler that never converges at this shape.
+
+**Division of labor conclusion:** the B70's proven regime is dev-scale
+(512ctx, 46k tok/s hardened, clean windows); 124M×1024 belongs on the CUDA
+fleet (5060: 29.5k measured; 4080S: est. 75-90k). κ=1 s1 reassigned to the
+5060 queue behind the 13L control. Candidate B70 work instead: the RQ3
+dev-scale H-sweep and κ-instability seed expansion — same-science, right
+tool. (Closing the stuck window via boundary-aware graceful stop; the run
+was 10 iterations old, nothing lost.)

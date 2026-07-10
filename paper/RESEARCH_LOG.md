@@ -430,3 +430,28 @@ first quantitative account of *why* the Free Transformer needs scale.
 
 RQ2 unlocked: we now hold a live-latent 124M checkpoint for probing and
 steering (what do 0.998 bits/token of learned decisions encode on web text?).
+
+---
+
+## 2026-07-10 (later) — 13L control lands: the seed-1 grid at 124M is complete
+
+| arm | params | best val (posterior) | honest NLL | KL |
+|---|---|---|---|---|
+| baseline 12L | 123.6M | 3.2092 | 3.2092 | — |
+| **baseline 13L (params-matched)** | 130.67M | **3.1802** | 3.1802 | — |
+| free κ=0.5 (collapsed) | 130.69M | 3.1968 | ≈3.1968 | ~0 |
+| free κ=1 (alive) | 130.69M | 2.6944 | ≈3.380 (ELBO) | 0.998b |
+
+Three verdicts:
+1. **The 13L control beats the collapsed-free model** (3.1802 < 3.1968): a
+   dead non-causal encoder block is worth *less* than a 13th decoder layer.
+   Without this control we'd have credited the collapsed run's edge over
+   12L to mysterious latent benefits. The control was worth running.
+2. **Depth buys 0.029 nats** (12L→13L at +5.7% params) — the yardstick for
+   all params-vs-mechanism arguments in this study.
+3. **κ=1 recovery rate vs the proper control: 71%** (CE drop 0.492 / KL
+   0.692) — the dev→124M improvement (55%→71%) stands with the honest
+   reference. Curve so far: 55% @ 51M/TinyStories → 71% @ 124M/FineWeb.
+
+Queue: baseline s2 auto-chains on the 5060; free κ=1 s2 mid-run on the
+4080S; free κ=0.5 s2 (the 124M collapse-rate question) next in line.

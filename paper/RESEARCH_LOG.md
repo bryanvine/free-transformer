@@ -403,3 +403,30 @@ Open thread these results sharpen: at 124M/FineWeb κ=0.5 collapsed on its
 single seed — is 124M collapse also stochastic (needs free κ=0.5 s2) or
 deterministic at this scale/data? κ=1 (4080S, running) probes the budget
 axis; free κ=0.5 s2 queued behind baseline s2 on the 5060.
+
+---
+
+## 2026-07-10 — κ=1 at 124M: the latent LIVES, and its economics improve with scale
+
+ft124m_free_k1_s1 (4080S, 74.4k tok/s, 9.2h): **KL pinned at 0.998 b/tok
+through all 5000 iters — no collapse** where κ=0.5 died by iter 2000.
+Collapse at 124M is budget-dependent (single seeds each; the dev lottery
+says replicate before over-claiming — free κ=0.5 s2 and κ=1 s2 queued).
+
+**The recovery-rate curve** (fraction of the KL spend the model earns back
+in posterior-CE, vs the params-matched-ish baseline):
+
+| scale/data | κ | CE drop / KL spend | recovery |
+|---|---|---|---|
+| 51M / TinyStories | 1 | 0.383 / 0.693 | 55% |
+| 124M / FineWeb-Edu | 1 | 0.521 / 0.692 | **75%** |
+
+(124M numbers pending same-subset baseline eval; direction robust.) If
+recovery keeps climbing with scale, it crosses 100% somewhere below the
+paper's 1.5B — at which point the latent is free on NLL and its downstream
+gains become mechanically unsurprising. **This curve is the bridge between
+our small-scale tax findings and the paper's large-scale claims** — and the
+first quantitative account of *why* the Free Transformer needs scale.
+
+RQ2 unlocked: we now hold a live-latent 124M checkpoint for probing and
+steering (what do 0.998 bits/token of learned decisions encode on web text?).

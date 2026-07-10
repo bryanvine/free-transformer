@@ -455,3 +455,12 @@ Three verdicts:
 
 Queue: baseline s2 auto-chains on the 5060; free κ=1 s2 mid-run on the
 4080S; free κ=0.5 s2 (the 124M collapse-rate question) next in line.
+
+---
+
+## 2026-07-10 (night) — κ=1 s2: survival replicates
+
+ft124m_free_k1_s2: val 2.7012, KL 0.999b — alive, and within 0.007 nats of
+seed 1 (2.6944). κ=1 at 124M is 2/2 alive; κ=0.5 is 0/1 (s2 launched on the
+4080S — the determinism question). The live-latent seed band being this
+tight also means the recovery-rate number is stable, not seed luck.

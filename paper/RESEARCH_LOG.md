@@ -372,3 +372,34 @@ fleet (5060: 29.5k measured; 4080S: est. 75-90k). κ=1 s1 reassigned to the
 dev-scale H-sweep and κ-instability seed expansion — same-science, right
 tool. (Closing the stuck window via boundary-aware graceful stop; the run
 was 10 iterations old, nothing lost.)
+
+---
+
+## 2026-07-10 — B70 window 3 results: H doesn't matter; collapse is a 1-in-3 coin flip
+
+11/11 runs clean (~47 min each, second consecutive zero-incident hardened
+window; vLLM auto-restored).
+
+**RQ3a — latent width H at κ=0.5 (dev scale, posterior-val, all XPU):**
+
+| H | val (3 seeds) | KL |
+|---|---|---|
+| 4 | 1.316–1.347 | ~0.48b |
+| 8 | 1.331–1.346 | ~0.48b |
+| 16 | 1.322–1.343 | ~0.49b |
+
+All widths statistically indistinguishable; every run pins KL at exactly κ.
+**The free-bits budget, not channel width, is the operative dial** — even
+H=4 (4 bits max) dwarfs a 0.5-bit budget. Width is slack at this scale.
+
+**RQ3b — κ=0.125 collapse rate, n=6 (3 CUDA + 3 XPU seeds):**
+alive at ~0.117–0.118b: s1,s3 (cuda), s4,s5 (xpu); collapsed at ~0.005b:
+s2 (cuda), s6 (xpu). **Collapse rate 2/6, strictly bimodal (no middle
+ground), one collapse on each backend** — a seed lottery, not a backend
+artifact. Collapsed runs' val ≈ baseline+block; alive runs ≈ 0.025 better
+on posterior-val (and pay it back at generation, per the ELBO accounting).
+
+Open thread these results sharpen: at 124M/FineWeb κ=0.5 collapsed on its
+single seed — is 124M collapse also stochastic (needs free κ=0.5 s2) or
+deterministic at this scale/data? κ=1 (4080S, running) probes the budget
+axis; free κ=0.5 s2 queued behind baseline s2 on the 5060.

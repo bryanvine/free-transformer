@@ -516,3 +516,19 @@ What survives error bars comfortably:
 baseline s3 queued (5060) to pin the band; the paper leads with this
 episode — the cleanest possible demonstration of why the field's N=1
 custom misleads, caught in our own kitchen.
+
+---
+
+## 2026-07-11 (night) — κ=2 falsifies the free-marginal prediction: the budget curve bends at κ≈1
+
+ft124m_free_k2_s1: posterior-val 2.3419, KL 1.999b (alive) → **ELBO 3.727**,
+well outside the pre-registered 3.38–3.42 prediction. The marginal-recovery
+curve at 124M/FineWeb: ~42% for the first 0.5 bits (vs baseline band mean),
+**99% for κ 0.5→1**, **51% for κ 1→2**. ELBO(κ): 3.19 → 3.384 → 3.386 →
+3.727 for κ ∈ {0, 0.5, 1, 2}. The free-lunch region is real but bounded:
+**κ≈1 is the optimum at this scale** — beyond it, added latent bandwidth
+costs half its price again. Registered prediction, falsified on schedule;
+both the prediction and its failure stay in the record.
+
+4080S continues with κ=0.5 s3 (collapse lottery currently 1 dead / 1
+resurrected — n=3 next).

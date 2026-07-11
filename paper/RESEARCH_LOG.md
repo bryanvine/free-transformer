@@ -464,3 +464,31 @@ ft124m_free_k1_s2: val 2.7012, KL 0.999b — alive, and within 0.007 nats of
 seed 1 (2.6944). κ=1 at 124M is 2/2 alive; κ=0.5 is 0/1 (s2 launched on the
 4080S — the determinism question). The live-latent seed band being this
 tight also means the recovery-rate number is stable, not seed luck.
+
+---
+
+## 2026-07-11 — κ=0.5 s2: resurrection, and the marginal bit is already free at 124M
+
+**Collapse is not an absorbing state.** ft124m_free_k0.5_s2 KL trace:
+0.158 → 0.049 → 0.107 → **0.002 (dead @2000)** → **0.394 (@2500)** → pinned
+~0.48 through 5000. Spontaneous recovery, well before (and unrelated to) a
+checkpoint-resume at iter 4296. Seed 1 stayed dead 2000→5000. So at
+124M/FineWeb, κ=0.5 is 1 dead + 1 resurrected of 2 seeds — the dev-scale
+seed lottery exists here too, with richer dynamics (death is escapable).
+
+**Budget-invariant ELBO / free marginal bits.** Final posterior-val + KL:
+
+| run | post-val | KL | ELBO (honest NLL bound) |
+|---|---|---|---|
+| κ=0.5 s2 (alive) | 3.0512 | 0.480b | **3.384** |
+| κ=1 s1 (alive) | 2.6944 | 0.998b | **3.386** |
+| κ=1 s2 (alive) | 2.7012 | 0.999b | **3.388** |
+
+Three live-latent runs, two budgets, one honest NLL. The marginal KL bit
+between κ=0.5 and κ=1 is recovered at **99.4%** (CE drop 0.357 vs marginal
+cost 0.359 nats): average recovery is 71%, but **the marginal bit is
+already free at 124M**. Prediction: κ=2 at 124M lands at ELBO ≈ 3.38-3.42
+if the marginal curve holds (launched, 4080S). This—average-vs-marginal KL
+economics—is the cleanest quantitative bridge yet to the paper's
+large-scale claims: whatever Z buys downstream, at sufficient scale it
+costs nothing on the bound.

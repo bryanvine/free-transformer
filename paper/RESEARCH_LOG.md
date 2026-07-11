@@ -492,3 +492,27 @@ if the marginal curve holds (launched, 4080S). This—average-vs-marginal KL
 economics—is the cleanest quantitative bridge yet to the paper's
 large-scale claims: whatever Z buys downstream, at sufficient scale it
 costs nothing on the bound.
+
+---
+
+## 2026-07-11 (later) — baseline s2 dissolves yesterday's depth verdict: our own error-bars lesson
+
+baseline_s2 = **3.1710** vs s1 = 3.2092: the 124M baseline seed band is
+**0.038 nats wide** — larger than yesterday's "depth buys 0.029" effect,
+and it swallows both the 13L control (3.1802) and the collapsed-free run
+(3.1968). Retraction within 24 hours, by our own methodology: at N=1,
+"13L beats collapsed-free" and "depth buys 0.029" read as findings; at
+N=2 they are indistinguishable from seed noise. (Dev scale misled us here:
+its baseline band was 0.003 — 124M/FineWeb noise is ~10× wider at this
+token budget.)
+
+What survives error bars comfortably:
+- **the live-latent tax**: ELBO ≈ 3.385 vs baseline band ≈ 3.19 → ~0.195
+  nats, 5× the seed noise;
+- **the budget-invariant ELBO / free marginal bit** (three live runs,
+  0.004 spread — tighter than baseline noise, remarkably);
+- **collapse phenomenology** (KL traces are qualitative and unambiguous).
+
+baseline s3 queued (5060) to pin the band; the paper leads with this
+episode — the cleanest possible demonstration of why the field's N=1
+custom misleads, caught in our own kitchen.

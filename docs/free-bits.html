@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Bits Aren't Free — an independent replication of the Free Transformer</title>
+<meta name="description" content="The first independent replication of Fleuret's Free Transformer (arXiv:2510.17558), at 51M–124M parameters on consumer GPUs, with multi-seed error bars: the latent tax, the collapse lottery, and the budget economics that reconcile small-scale costs with large-scale claims.">
+<meta property="og:title" content="Free Bits Aren't Free">
+<meta property="og:description" content="First independent replication of the Free Transformer: honest NLL accounting, posterior-collapse lotteries, and the κ-budget economics, measured at 51M–124M with error bars on consumer GPUs.">
+<style>
+  body{ margin:0; background:#fdfdfc; color:#1a1a1a;
+        font:18px/1.65 Georgia, "Times New Roman", serif; }
+  .wrap{ max-width:880px; margin:0 auto; padding:56px 24px 96px; }
+  h1{ font-size:34px; line-height:1.2; margin:0 0 6px; letter-spacing:-0.01em; }
+  .subtitle{ font-size:20px; color:#444; margin:0 0 14px; font-style:italic; }
+  .byline{ font-size:15px; color:#5b6470; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  .byline a{ color:#1f6feb; text-decoration:none; }
+  h2{ font-size:24px; margin:44px 0 10px; }
+  h3{ font-size:19px; margin:30px 0 8px; }
+  a{ color:#1f6feb; }
+  .tldr{ background:#f2f6fd; border:1px solid #d6e3f8; border-radius:10px;
+         padding:18px 22px; margin:26px 0; font-size:16.5px; }
+  .tldr b{ color:#15181c; }
+  table{ border-collapse:collapse; margin:18px 0; font-size:15.5px;
+         font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  th, td{ padding:6px 14px; border-bottom:1px solid #e3e6ea; text-align:left; }
+  td.n, th.n{ text-align:right; font-variant-numeric:tabular-nums; }
+  thead th{ border-bottom:2px solid #1a1a1a; font-weight:650; }
+  figure{ margin:26px 0; }
+  figure img{ width:100%; max-width:820px; border:1px solid #e3e6ea; border-radius:8px; background:#fcfcfb; }
+  figcaption{ font-size:14.5px; color:#5b6470; margin-top:8px;
+              font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  code, pre{ font-family:"SF Mono",Menlo,Consolas,monospace; font-size:14.5px; }
+  pre{ background:#f6f7f9; border:1px solid #e3e6ea; border-radius:8px; padding:14px 16px; overflow-x:auto; }
+  .rule{ text-align:center; color:#9aa2ad; margin:40px 0; letter-spacing:0.6em; }
+  footer{ margin-top:64px; padding-top:18px; border-top:1px solid #e3e6ea;
+          color:#5b6470; font-size:14.5px;
+          font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  .note{ font-size:15px; color:#5b6470; font-style:italic; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Free Bits Aren't Free</h1>
+<p class="subtitle">An independent replication of the Free Transformer at 51M–124M parameters, with error bars</p>
+<p class="byline">Bryan Vine · July 2026 ·
+  <a href="https://github.com/bryanvine/free-transformer">github.com/bryanvine/free-transformer</a> ·
+  Paper 1 of the <i>free-transformer</i> series</p>
+
+<div class="tldr">
+<b>TL;DR.</b> Nine months after FAIR published the
+<a href="https://arxiv.org/abs/2510.17558">Free Transformer</a> — a GPT that samples a latent
+"decision" <i>Z</i> mid-decoder before generating — we could find no public independent
+replication. This is one, at 51M and 124M parameters on consumer GPUs (an RTX&nbsp;5060, an
+RTX&nbsp;4080&nbsp;SUPER, and an Intel Arc&nbsp;Pro&nbsp;B70 — including, as far as we can tell, the first
+documented LLM pretraining on Arc B-series silicon), with ≥3 seeds on every headline claim.
+Findings: <b>(1)</b> the architecture's logged loss is an ELBO-like quantity that flatters it
+by its full KL — naïve comparisons are broken by construction; <b>(2)</b> on honest accounting
+the latent is a <b>tax of ≈0.17&nbsp;nats</b> at 124M, but the tax curve <b>bends at κ≈1</b>: the
+marginal bit of latent budget between κ=0.5 and κ=1 is recovered at ~99%, and the average
+recovery improves from 55% (51M) to 71% (124M) — a quantitative bridge to the paper's
+large-scale gains; <b>(3)</b> posterior collapse is a <b>seed lottery, not a fate</b>: every
+run's KL crashes early, roughly a third never recover, and one run died at iteration 2,000
+and spontaneously resurrected by 2,500; <b>(4)</b> latent width doesn't matter — the free-bits
+budget κ is the only operative dial. Everything here ran on hardware costing less than one
+datacenter GPU, for roughly $15 of electricity.
+</div>
+
+<h2>1&nbsp;&nbsp;Introduction</h2>
+<p>
+Every token an ordinary GPT emits is a fresh roll of the dice; consistency about "who is
+speaking and where this is going" exists only implicitly, renegotiated at each position. The
+Free Transformer (Fleuret, <a href="https://arxiv.org/abs/2510.17558">arXiv:2510.17558</a>)
+makes that decision explicit: a one-block non-causal encoder computes a per-token binary
+latent <i>Z</i> from the mid-depth activations during training; at generation, <i>Z</i> is
+sampled from a uniform prior and injected into the decoder's keys and values at depth
+<i>L</i>/2. Trained with a conditional-VAE objective under a free-bits budget κ, the paper
+reports notable gains on reasoning and code benchmarks at 1.5B and 8B parameters for ~3%
+overhead.
+</p>
+<p>
+It is a simple, load-bearing idea from a frontier lab — and, nine months later, we could not
+find a single public independent replication at any scale. This series is that replication,
+and this first paper asks the questions a replication must ask before it can ask anything
+else: <b>what does the architecture actually cost, measured honestly; when does its latent
+survive training; and which of the obvious comparisons are broken?</b> The judgments here are
+deliberately confined to language-modeling likelihood; the paper's downstream claims live at
+scales we approach, not reach, and Paper&nbsp;2 will probe what the surviving latents encode.
+</p>
+
+<h2>2&nbsp;&nbsp;Setup</h2>
+<p>
+The backbone is a from-scratch pre-norm GPT (RMSNorm, SwiGLU, RoPE, tied embeddings, GPT-2
+BPE) identical to the one in our earlier
+<a href="https://bryanvine.github.io/mla-gpt/">Attention, Controlled</a> study — the 124M
+configuration matches that study's MHA arm to the parameter (123,587,328). The Free
+Transformer arm adds, faithfully to the paper: the one-block non-causal encoder whose queries
+are a learned embedding ζ (position enters only via RoPE); H=16 straight-through Bernoulli
+bits per token; injection into keys/values only at layer <i>L</i>/2; and the per-token
+free-bits hinge max(0,&nbsp;KL<sub>t</sub>&nbsp;−&nbsp;κ). One documented deviation: the paper's
+"one-hot over 2<sup>16</sup> with a linear post-sampler" is implemented as a factored linear
+map on the ±1 bit vector — a literal 2<sup>16</sup>×d table cannot receive straight-through
+gradients tractably, and the paper's own ~3% overhead figure accounts for the encoder block,
+not a 268M-parameter table. With the post-sampler zero-initialized, the free model's forward
+pass is bit-exact to the baseline's at initialization — a unit-tested invariant that pins the
+injection wiring.
+</p>
+<table>
+<thead><tr><th>Scale</th><th>Data</th><th class="n">Tokens</th><th>Arms (seeds)</th></tr></thead>
+<tbody>
+<tr><td>dev — 51M (8L/512d, 512 ctx)</td><td>TinyStories</td><td class="n">131M</td>
+    <td>baseline (3); free κ∈{⅛,½,1,2,4} (3 each); H∈{4,8,16} (3 each); κ=⅛ ×6</td></tr>
+<tr><td>headline — 124M (12L/768d, 1024 ctx)</td><td>FineWeb-Edu</td><td class="n">2.46B</td>
+    <td>baseline (2, third running); 13L params-matched control (1); free κ=½ (3); κ=1 (2, third running); κ=2 (1)</td></tr>
+</tbody>
+</table>
+<p class="note">
+The 13-layer control matches the free model's parameter count to 0.02% (130.67M vs 130.69M) —
+the paper never runs this control because at 8B the encoder overhead is negligible; at 124M
+(+5.7%) it is not.
+</p>
+
+<h2>3&nbsp;&nbsp;Trap #1: the loss your training loop logs is not a language-model loss</h2>
+<p>
+During training and evaluation the free model's <i>Z</i> comes from the encoder — which reads
+the <i>entire sequence</i>, including the tokens being predicted. The logged loss is therefore
+an ELBO-like quantity, flattered by up to the full KL the latent carries. At κ=2 the logged
+validation loss looks 0.87 nats <i>better</i> than the baseline; honestly accounted, it is
+0.52 nats <i>worse</i>. Any comparison made on logged losses — including, we suspect, some
+future replications' — is broken by construction. The honest quantity is the ELBO bound
+(posterior CE + KL), which we verified is nearly tight here with a posterior-proposal
+importance-weighted bound (K=16 tightens it by only ~0.005 nats). A second, subtler trap: the
+<i>prior</i>-proposal IWAE — the obvious estimator — is useless at realistic budgets, since a
+sequence carries κ·T bits of latent information and no feasible number of prior samples finds
+the posterior region.
+</p>
+<figure>
+  <img src="figures/fig3_leak.svg" alt="Paired bars per arm: the logged validation loss with posterior Z versus the honest ELBO-bound NLL. The logged loss falls as kappa grows while the honest NLL rises.">
+  <figcaption><b>Figure 1.</b> The posterior leak at 124M. Gray: validation loss as a training
+  loop logs it (Z from the encoder, which sees the answer). Blue: the honest NLL bound. The
+  gap is the KL the latent carries — the logged number improves with κ precisely as the
+  honest number worsens.</figcaption>
+</figure>
+
+<h2>4&nbsp;&nbsp;The latent tax, and the bend at κ≈1</h2>
+<p>
+On honest accounting, at 124M/2.46B tokens the live-latent Free Transformer pays
+<b>≈0.17&nbsp;nats (band 3.34–3.39) against the baseline band (3.17–3.21)</b> — roughly four
+times our measured seed noise, and far clear of the params-matched control. But the
+<i>shape</i> of the tax across budgets is the finding:
+</p>
+<table>
+<thead><tr><th>κ (bits/tok)</th><th class="n">posterior CE</th><th class="n">KL</th>
+<th class="n">honest NLL</th><th>marginal recovery</th></tr></thead>
+<tbody>
+<tr><td>0 (baseline ×2 seeds)</td><td class="n">—</td><td class="n">—</td><td class="n">3.171 / 3.209</td><td>—</td></tr>
+<tr><td>0.5 (live seeds)</td><td class="n">2.993 / 3.051</td><td class="n">0.48–0.50</td><td class="n">3.337 / 3.384</td><td>~42% of the first half-bit</td></tr>
+<tr><td>1 (2 seeds)</td><td class="n">2.694 / 2.701</td><td class="n">1.00</td><td class="n">3.386 / 3.388</td><td><b>~99% — the marginal bit is free</b></td></tr>
+<tr><td>2 (1 seed)</td><td class="n">2.342</td><td class="n">2.00</td><td class="n">3.727</td><td>~51% — the bend</td></tr>
+</tbody>
+</table>
+<figure>
+  <img src="figures/fig1_elbo_vs_kappa.svg" alt="Honest NLL versus free-bits budget kappa at 124M: baseline band at kappa 0, live-latent points flat from kappa 0.5 to 1, rising sharply at kappa 2. One collapsed point sits inside the baseline band.">
+  <figcaption><b>Figure 2.</b> Honest NLL vs. free-bits budget at 124M (each dot one seed).
+  The curve is flat from κ=0.5 to κ=1 — the model earns back the marginal half-bit almost
+  entirely — then bends: κ=2 pays half-price for bandwidth it can't use. A collapsed run
+  (red) lands in the baseline band: a dead latent is just a worse extra layer. We
+  pre-registered "the marginal bit stays free through κ=2" after seeing the κ=0.5→1
+  flatness; the κ=2 run falsified it within twelve hours, and both the prediction and its
+  failure are in the research log.</figcaption>
+</figure>
+<p>
+The scale trend makes this more than a curiosity. At 51M on TinyStories, the model recovers
+~55% of the KL it spends at κ=1; at 124M on FineWeb-Edu, ~71% on average — and ~99% at the
+margin near the optimum. If the recovery rate keeps climbing with scale and data richness,
+it crosses 100% somewhere below the paper's 1.5B — at which point the latent is free on
+likelihood, and whatever it buys downstream comes at no cost. <b>This is, we believe, the
+first quantitative account of <i>why</i> the Free Transformer should need scale</b>, and it
+reconciles our small-scale tax with the paper's large-scale gains without requiring either
+result to be wrong.
+</p>
+
+<h2>5&nbsp;&nbsp;The collapse lottery — and a resurrection</h2>
+<p>
+The paper warns that too large a κ collapses training. We found the opposite boundary more
+interesting: at small κ the latent's survival is a coin flip. At dev scale with κ=⅛ (n=6
+seeds, across two GPU vendors), four runs settle at the budget and two collapse to ~0.005
+bits — strictly bimodal, one death per backend, no middle ground. At 124M with κ=0.5 (n=3),
+<b>every</b> seed's KL crashes toward zero in the first ~1,500 iterations; one never
+recovers, one recovers early, and one sat dead from iteration 2,000 to 2,400 and then
+spontaneously resurrected to full budget. The free-bits hinge is one-sided — nothing pushes
+information back into a dead latent — so whether Z lives is decided by whether reconstruction
+stumbles onto a use for it before the encoder's gradients vanish. κ=1 survived 2 of 2 completed seeds (a third is in flight):
+a larger early budget shelters the latent through the danger zone.
+</p>
+<figure>
+  <img src="figures/fig2_kl_traces.svg" alt="KL trajectories at 124M: all kappa 0.5 seeds crash early; one stays at zero, one recovers at iteration 1500, one recovers at 2500; the kappa 1 run stays pinned at 1 bit.">
+  <figcaption><b>Figure 3.</b> Posterior KL during training at 124M. The early crash is
+  universal; recovery is the lottery. The aqua trace is the resurrection: dead at 2,000,
+  fully recovered by 2,500, indistinguishable from its never-died sibling by the end.
+  Verified unrelated to a checkpoint resume that occurred at iteration 4,296.</figcaption>
+</figure>
+<p>
+Two practical corollaries. First, <b>a single-seed replication of this architecture is
+uninformative</b>: at κ=0.5 it reports "works" or "collapses" with equal sincerity — our own
+first 124M seed read as deterministic collapse until seeds 2 and 3 voted otherwise. Second,
+latent width is slack: H∈{4,8,16} at κ=0.5 are statistically indistinguishable on both the
+ELBO and the tight bound — every configuration pins its KL at exactly κ. <b>The budget is
+the only dial.</b>
+</p>
+
+<h2>6&nbsp;&nbsp;Our own error-bars lesson, preserved as data</h2>
+<p>
+Midway through this study we reported internally that the params-matched 13L control "beats
+the collapsed free model, so a dead encoder is worth less than a decoder layer, and depth
+buys 0.029 nats." Twenty-four hours later, baseline seed 2 landed 0.038 nats away from seed
+1 — wider than the effect — and the claim dissolved. We keep the episode in the research log
+rather than smoothing it over, because it is the cleanest demonstration of the study's
+methodological point: at 124M and a 2.5B-token budget, seed noise is ~0.04 nats, and any
+comparison below that line is a coin-read. Dev-scale noise (0.003) had taught us the wrong
+intuition; noise must be measured at the scale of the claim.
+</p>
+
+<h2>7&nbsp;&nbsp;Limitations</h2>
+<p>
+Likelihood is not the paper's headline metric: Fleuret's gains are on prompted downstream
+benchmarks at 4–60× our compute, where conditioning uses the posterior prefill and a latent
+that is likelihood-neutral could still change generation usefully. Our token budget (2.46B)
+is Chinchilla-ish for 124M but a fraction of the paper's; the collapse lottery rates are
+n=3–6; κ=2's bend rests on one seed; and the recovery-rate extrapolation is two points and a
+mechanism, not a law. Paper&nbsp;2 addresses the part likelihood can't see: steering, probing,
+and generation-quality experiments on the surviving latents.
+</p>
+
+<h2>8&nbsp;&nbsp;Reproducibility</h2>
+<p>
+Everything — code, configs, seeds, the live research log with every decision and both
+pre-registered predictions — is in the
+<a href="https://github.com/bryanvine/free-transformer">repository</a>. Every run in this
+paper names its seed, config, and commit; the training loop checkpoints on SIGTERM, so every
+result survived preemption by the owner needing his GPU back.
+</p>
+<pre>python3 -m venv .venv --system-site-packages && .venv/bin/pip install -e ".[dev]"
+.venv/bin/python -m pytest tests/            # 12 tests incl. the init-equivalence invariant
+.venv/bin/python scripts/prepare_fineweb.py  # 9.9B tokens, GPT-2 BPE
+.venv/bin/python scripts/train.py configs/ft124m_fineweb.yaml \
+    --set model.model_type=free model.kappa_bits=1 train.seed=1
+.venv/bin/python scripts/eval_prior.py --iwae-k 16 --iwae-posterior   # honest NLL</pre>
+<table>
+<thead><tr><th>GPU</th><th class="n">124M throughput</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>RTX 4080 SUPER 16GB</td><td class="n">74k tok/s</td><td>batch 12, torch.compile</td></tr>
+<tr><td>RTX 5060 8GB</td><td class="n">30k tok/s</td><td>batch 4 + chunked CE, beside a llama-server</td></tr>
+<tr><td>Intel Arc Pro B70 32GB</td><td class="n">58k tok/s (51M dev)</td><td>torch 2.11+xpu, eager; first documented Arc B-series pretraining. 124M×1024ctx is not yet viable on the XPU stack (dispatch-bound eager; inductor autotune storms) — the full account is its own worklog post.</td></tr>
+</tbody>
+</table>
+<p>
+Total spend: ≈200 consumer-GPU-hours across three machines, ≈$15 of electricity, zero cloud.
+The cross-backend anchors agree within seed noise, so none of the findings are
+vendor-specific.
+</p>
+
+<h2>9&nbsp;&nbsp;What's next</h2>
+<p>
+Paper 2 probes what a surviving latent encodes (bit-level probes, steering by pinning
+<i>Z</i>, per-Z generation diversity) — the κ=1 checkpoints carry a full bit per token of
+learned decisions. A 350M extension on a weekend RTX&nbsp;6000&nbsp;Pro would add a third point to
+the recovery curve; if it lands near 85%, the crossover-below-1.5B story sharpens
+considerably.
+</p>
+
+<footer>
+Built from scratch in PyTorch; trained on an RTX 5060, an RTX 4080 SUPER, and an Intel Arc
+Pro B70. The Free Transformer is François Fleuret's idea
+(<a href="https://arxiv.org/abs/2510.17558">arXiv:2510.17558</a>); this is an independent
+implementation and study. Research log, data, and code:
+<a href="https://github.com/bryanvine/free-transformer">bryanvine/free-transformer</a>.
+© 2026 Bryan Vine, MIT-licensed.
+</footer>
+
+</div>
+</body>
+</html>

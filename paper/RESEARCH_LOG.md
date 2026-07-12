@@ -532,3 +532,22 @@ both the prediction and its failure stay in the record.
 
 4080S continues with κ=0.5 s3 (collapse lottery currently 1 dead / 1
 resurrected — n=3 next).
+
+---
+
+## 2026-07-12 — κ=0.5 lottery complete (1 dead / 1 resurrected / 1 never-died); ELBO band honesty pass
+
+ft124m_free_k0.5_s3: alive throughout (KL 0.48–0.50), final posterior-val
+2.9927 → ELBO 3.337. **124M κ=0.5 collapse lottery: s1 dead, s2 resurrected,
+s3 never died — ~1/3, matching the dev-scale rate.** Collapse at 124M is a
+seed lottery after all; the early "deterministic at this scale" reading
+(from s1 alone) is retired.
+
+Refinement: with s3, the live-latent ELBO band is **3.337–3.388 (n=4 runs,
+two budgets)** — the earlier "budget-invariant to 3 decimals" (n=3, spread
+0.004) was partly seed luck. Sound claim: no detectable budget effect
+between κ=0.5 and κ=1 relative to seed noise; the latent tax is
+**≈0.17 ± 0.04 nats vs the baseline band** — still ~4× the noise floor.
+κ=2 (ELBO 3.727) remains clearly outside the band: the bend at κ≈1 stands.
+
+κ=1 s3 launched (4080S) to complete n=3 on the flagship arm.

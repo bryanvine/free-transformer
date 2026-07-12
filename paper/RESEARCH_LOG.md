@@ -551,3 +551,16 @@ between κ=0.5 and κ=1 relative to seed noise; the latent tax is
 κ=2 (ELBO 3.727) remains clearly outside the band: the bend at κ≈1 stands.
 
 κ=1 s3 launched (4080S) to complete n=3 on the flagship arm.
+
+---
+
+## 2026-07-12 (later) — B70 eval sweep: tight bounds confirm the ELBO story
+
+Posterior-proposal IWAE-16 across all 13 B70-resident dev checkpoints
+(runs/eval_xpu_dev.json): the tight bound sits only ~0.005 under the ELBO
+at these KL levels — **the ELBO-based tax numbers were already honest**.
+H-invariance survives the tight bound (H∈{4,8,16} all ≈1.66–1.68 vs
+baseline 1.51 → dev-scale live-latent tax ≈0.16 nats). Collapsed runs
+show the expected signature (prior-CE == posterior-CE). Footnote for the
+paper table: compute ELBO and IWAE on matched window subsets (small
+inversions otherwise at low KL). Third consecutive clean Arc window.

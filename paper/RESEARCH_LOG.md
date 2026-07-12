@@ -564,3 +564,21 @@ baseline 1.51 → dev-scale live-latent tax ≈0.16 nats). Collapsed runs
 show the expected signature (prior-CE == posterior-CE). Footnote for the
 paper table: compute ELBO and IWAE on matched window subsets (small
 inversions otherwise at low KL). Third consecutive clean Arc window.
+
+---
+
+## 2026-07-12 (night) — final seeds land; Paper 1 numbers finalized
+
+- **baseline s3 = 3.2222** → band [3.171, 3.222], n=3, width 0.051 (the
+  seed-noise floor for every 124M claim).
+- **κ=1 s3 = 2.7768, KL 0.998 — alive, 3/3 at κ=1 — via a near-death**:
+  KL 0.675→0.010 (dead @1000) →1.03 (recovered @3000) → pinned. Its ELBO
+  (3.469) carries a ~0.08-nat scar vs its unscarred siblings (3.386/3.394):
+  the first quantified price of a latent near-death. Resurrections: n=2.
+- Final economics: first half-bit ~52% recovered; κ=1 average ~69%;
+  marginal κ0.5→1 85–99% (seed-dependent); κ1→2 ~51%. Tax ≈0.19 ± 0.05.
+- Paper, figures, and results dataset updated and pushed; fig2 now shows
+  both resurrections (the κ=1 s3 arc is the centerpiece).
+- Ops note: baseline s3 hung once in a CUDA call on the 5060 (0% util, log
+  frozen; SIGKILL + checkpoint-resume, ~2h redone — no GPU wedge, unlike
+  the Arc failure mode).

@@ -54,15 +54,15 @@
 "decision" <i>Z</i> mid-decoder before generating — we could find no public independent
 replication. This is one, at 51M and 124M parameters on consumer GPUs (an RTX&nbsp;5060, an
 RTX&nbsp;4080&nbsp;SUPER, and an Intel Arc&nbsp;Pro&nbsp;B70 — including, as far as we can tell, the first
-documented LLM pretraining on Arc B-series silicon), with ≥3 seeds on every headline claim.
+documented LLM pretraining on Arc B-series silicon), with 3 seeds on every headline claim.
 Findings: <b>(1)</b> the architecture's logged loss is an ELBO-like quantity that flatters it
 by its full KL — naïve comparisons are broken by construction; <b>(2)</b> on honest accounting
-the latent is a <b>tax of ≈0.17&nbsp;nats</b> at 124M, but the tax curve <b>bends at κ≈1</b>: the
-marginal bit of latent budget between κ=0.5 and κ=1 is recovered at ~99%, and the average
-recovery improves from 55% (51M) to 71% (124M) — a quantitative bridge to the paper's
+the latent is a <b>tax of ≈0.19&nbsp;nats</b> at 124M, but the tax curve <b>bends at κ≈1</b>: the
+marginal bit of latent budget between κ=0.5 and κ=1 is recovered at 85–99% depending on
+seed history, and the average recovery improves from ~55% (51M) to ~69% (124M) — a quantitative bridge to the paper's
 large-scale gains; <b>(3)</b> posterior collapse is a <b>seed lottery, not a fate</b>: every
-run's KL crashes early, roughly a third never recover, and one run died at iteration 2,000
-and spontaneously resurrected by 2,500; <b>(4)</b> latent width doesn't matter — the free-bits
+run's KL crashes early, roughly a third never recover — and two runs died and spontaneously
+resurrected, one after 2,000 iterations dead; <b>(4)</b> latent width doesn't matter — the free-bits
 budget κ is the only operative dial. Everything here ran on hardware costing less than one
 datacenter GPU, for roughly $15 of electricity.
 </div>
@@ -112,7 +112,7 @@ injection wiring.
 <tr><td>dev — 51M (8L/512d, 512 ctx)</td><td>TinyStories</td><td class="n">131M</td>
     <td>baseline (3); free κ∈{⅛,½,1,2,4} (3 each); H∈{4,8,16} (3 each); κ=⅛ ×6</td></tr>
 <tr><td>headline — 124M (12L/768d, 1024 ctx)</td><td>FineWeb-Edu</td><td class="n">2.46B</td>
-    <td>baseline (2, third running); 13L params-matched control (1); free κ=½ (3); κ=1 (2, third running); κ=2 (1)</td></tr>
+    <td>baseline (3); 13L params-matched control (1); free κ=½ (3); κ=1 (3); κ=2 (1)</td></tr>
 </tbody>
 </table>
 <p class="note">
@@ -146,7 +146,7 @@ the posterior region.
 <h2>4&nbsp;&nbsp;The latent tax, and the bend at κ≈1</h2>
 <p>
 On honest accounting, at 124M/2.46B tokens the live-latent Free Transformer pays
-<b>≈0.17&nbsp;nats (band 3.34–3.39) against the baseline band (3.17–3.21)</b> — roughly four
+<b>≈0.19&nbsp;nats (band 3.34–3.47) against the baseline band (3.17–3.22)</b> — roughly four
 times our measured seed noise, and far clear of the params-matched control. But the
 <i>shape</i> of the tax across budgets is the finding:
 </p>
@@ -154,9 +154,9 @@ times our measured seed noise, and far clear of the params-matched control. But 
 <thead><tr><th>κ (bits/tok)</th><th class="n">posterior CE</th><th class="n">KL</th>
 <th class="n">honest NLL</th><th>marginal recovery</th></tr></thead>
 <tbody>
-<tr><td>0 (baseline ×2 seeds)</td><td class="n">—</td><td class="n">—</td><td class="n">3.171 / 3.209</td><td>—</td></tr>
-<tr><td>0.5 (live seeds)</td><td class="n">2.993 / 3.051</td><td class="n">0.48–0.50</td><td class="n">3.337 / 3.384</td><td>~42% of the first half-bit</td></tr>
-<tr><td>1 (2 seeds)</td><td class="n">2.694 / 2.701</td><td class="n">1.00</td><td class="n">3.386 / 3.388</td><td><b>~99% — the marginal bit is free</b></td></tr>
+<tr><td>0 (baseline, 3 seeds)</td><td class="n">—</td><td class="n">—</td><td class="n">3.171 – 3.222</td><td>—</td></tr>
+<tr><td>0.5 (live seeds)</td><td class="n">2.993 / 3.051</td><td class="n">0.48–0.50</td><td class="n">3.337 / 3.384</td><td>~52% of the first half-bit</td></tr>
+<tr><td>1 (3 seeds)</td><td class="n">2.694 – 2.777</td><td class="n">1.00</td><td class="n">3.386 – 3.469</td><td><b>85–99% — nearly free, seed-dependent</b></td></tr>
 <tr><td>2 (1 seed)</td><td class="n">2.342</td><td class="n">2.00</td><td class="n">3.727</td><td>~51% — the bend</td></tr>
 </tbody>
 </table>
@@ -172,7 +172,7 @@ times our measured seed noise, and far clear of the params-matched control. But 
 </figure>
 <p>
 The scale trend makes this more than a curiosity. At 51M on TinyStories, the model recovers
-~55% of the KL it spends at κ=1; at 124M on FineWeb-Edu, ~71% on average — and ~99% at the
+~55% of the KL it spends at κ=1; at 124M on FineWeb-Edu, ~69% on average — and 85–99% at the
 margin near the optimum. If the recovery rate keeps climbing with scale and data richness,
 it crosses 100% somewhere below the paper's 1.5B — at which point the latent is free on
 likelihood, and whatever it buys downstream comes at no cost. <b>This is, we believe, the
@@ -191,15 +191,16 @@ bits — strictly bimodal, one death per backend, no middle ground. At 124M with
 recovers, one recovers early, and one sat dead from iteration 2,000 to 2,400 and then
 spontaneously resurrected to full budget. The free-bits hinge is one-sided — nothing pushes
 information back into a dead latent — so whether Z lives is decided by whether reconstruction
-stumbles onto a use for it before the encoder's gradients vanish. κ=1 survived 2 of 2 completed seeds (a third is in flight):
-a larger early budget shelters the latent through the danger zone.
+stumbles onto a use for it before the encoder's gradients vanish. κ=1 survived 3 of 3 seeds — though not unscathed: one crashed to 0.01 bits by iteration
+1,000, recovered fully by 3,000, and its final honest NLL carries a ~0.08-nat scar from the
+dead interval. A larger budget improves the recovery odds; it does not prevent the crash.
 </p>
 <figure>
   <img src="figures/fig2_kl_traces.svg" alt="KL trajectories at 124M: all kappa 0.5 seeds crash early; one stays at zero, one recovers at iteration 1500, one recovers at 2500; the kappa 1 run stays pinned at 1 bit.">
   <figcaption><b>Figure 3.</b> Posterior KL during training at 124M. The early crash is
-  universal; recovery is the lottery. The aqua trace is the resurrection: dead at 2,000,
-  fully recovered by 2,500, indistinguishable from its never-died sibling by the end.
-  Verified unrelated to a checkpoint resume that occurred at iteration 4,296.</figcaption>
+  universal; recovery is the lottery. Two resurrections: the aqua κ=0.5 trace, dead from 2,000 to 2,400; and the violet κ=1
+  trace, at 0.01 bits by 1,000 and back at full budget by 3,000 — carrying a ~0.08-nat scar
+  in its final NLL. Both verified unrelated to checkpoint resumes.</figcaption>
 </figure>
 <p>
 Two practical corollaries. First, <b>a single-seed replication of this architecture is
@@ -214,10 +215,10 @@ the only dial.</b>
 <p>
 Midway through this study we reported internally that the params-matched 13L control "beats
 the collapsed free model, so a dead encoder is worth less than a decoder layer, and depth
-buys 0.029 nats." Twenty-four hours later, baseline seed 2 landed 0.038 nats away from seed
-1 — wider than the effect — and the claim dissolved. We keep the episode in the research log
+buys 0.029 nats." Twenty-four hours later, baseline seed 2 landed 0.038 nats from seed 1 — wider than the
+effect — and seed 3 stretched the band to 0.051; the claim dissolved. We keep the episode in the research log
 rather than smoothing it over, because it is the cleanest demonstration of the study's
-methodological point: at 124M and a 2.5B-token budget, seed noise is ~0.04 nats, and any
+methodological point: at 124M and a 2.5B-token budget, seed noise is ~0.05 nats, and any
 comparison below that line is a coin-read. Dev-scale noise (0.003) had taught us the wrong
 intuition; noise must be measured at the scale of the claim.
 </p>

@@ -48,7 +48,7 @@ def style_ax(ax):
 fig, ax = plt.subplots(figsize=(6.4, 4.0))
 style_ax(ax)
 
-base_vals = [final(f"ft124m_baseline_s{s}")[0] for s in (1, 2)]  # s3 pending
+base_vals = [final(f"ft124m_baseline_s{s}")[0] for s in (1, 2, 3)]
 ax.axhspan(min(base_vals), max(base_vals), color=GRID, alpha=0.55, lw=0)
 ax.axhline(sum(base_vals) / len(base_vals), color=INK, lw=1.0)
 ax.annotate("baseline band (12L, seeds)", (2.02, sum(base_vals) / 2 + 0.004),
@@ -58,7 +58,7 @@ ax.plot([0], [v13], marker="D", ms=6, color=INK2, mfc="none", mew=1.2, ls="none"
 ax.annotate("13L control", (0.05, v13 - 0.022), color=INK2, fontsize=9)
 
 pts = {0.5: ["ft124m_free_k0.5_s1", "ft124m_free_k0.5_s2", "ft124m_free_k0.5_s3"],
-       1.0: ["ft124m_free_k1_s1", "ft124m_free_k1_s2"],
+       1.0: ["ft124m_free_k1_s1", "ft124m_free_k1_s2", "ft124m_free_k1_s3"],
        2.0: ["ft124m_free_k2_s1"]}
 for kappa, runs in pts.items():
     for r in runs:
@@ -87,14 +87,15 @@ fig, ax = plt.subplots(figsize=(6.4, 3.8))
 style_ax(ax)
 series = [("ft124m_free_k0.5_s1", RED, "κ=0.5 s1 — collapses, stays dead"),
           ("ft124m_free_k0.5_s2", AQUA, "κ=0.5 s2 — dies, resurrects"),
-          ("ft124m_free_k0.5_s3", VIOLET, "κ=0.5 s3 — dips, recovers early"),
+          ("ft124m_free_k1_s3", VIOLET, "κ=1 s3 — dies at 1000, recovers by 3000"),
           ("ft124m_free_k1_s1", BLUE, "κ=1 s1 — pinned at budget")]
 for name, color, label in series:
     t = RES[name]["trace"]
     xs = [r["iter"] for r in t]
     ys = [r["kl"] for r in t]
     ax.plot(xs, ys, color=color, lw=2.0, solid_capstyle="round")
-    off = {"ft124m_free_k0.5_s3": 0.06, "ft124m_free_k0.5_s2": -0.05}.get(name, 0.0)
+    off = {"ft124m_free_k1_s1": 0.06, "ft124m_free_k1_s3": -0.06,
+           "ft124m_free_k0.5_s2": -0.05}.get(name, 0.0)
     ax.annotate(label, (xs[-1] + 60, ys[-1] + off), color=color, fontsize=9, va="center")
 ax.set_xlim(0, 8400)
 ax.set_xticks([0, 1000, 2000, 3000, 4000, 5000])

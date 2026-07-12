@@ -88,9 +88,29 @@ def iwae_bound(model, cfg, x, y, K: int, ctx) -> torch.Tensor:
 
 
 @torch.no_grad()
+def iwae_posterior_bound(model, cfg, x, y, K: int, ctx) -> torch.Tensor:
+    """K-sample IWAE NLL bound with the POSTERIOR as proposal (nats/token).
+
+    Weights: log p(x|z) + log p(z) - log q(z|x), z ~ Q(Z|S). Tight even at
+    high per-token KL, unlike prior-proposal IWAE (see RESEARCH_LOG
+    2026-07-07). Shape (B,).
+    """
+    B, T = x.shape
+    p = model.encode_latent(x)[0].clamp(1e-6, 1 - 1e-6)   # (B, T, H) posterior probs
+    log_pz = -T * cfg.latent_bits * math.log(2.0)          # uniform prior, per sequence
+    lws = []
+    for _ in range(K):
+        z = torch.bernoulli(p)
+        log_qz = (z * p.log() + (1 - z) * (1 - p).log()).sum(dim=(1, 2))  # (B,)
+        lws.append(_seq_logprob(model, x, y, z, ctx) + log_pz - log_qz)
+    lws = torch.stack(lws)                                 # (K, B)
+    return -(torch.logsumexp(lws, dim=0) - math.log(K)) / T
+
+
+@torch.no_grad()
 def eval_ckpt(run_dir: Path, data_dir: str, device: str, batch_size: int,
               prior_samples: int, max_batches: int, iwae_k: int = 0,
-              iwae_batches: int = 0) -> dict:
+              iwae_batches: int = 0, iwae_posterior: bool = False) -> dict:
     ck = torch.load(run_dir / "best.pt", map_location=device)
     cfg = FTConfig(**ck["model_cfg"])
     model = FreeTransformer(cfg).to(device)
@@ -121,7 +141,8 @@ def eval_ckpt(run_dir: Path, data_dir: str, device: str, batch_size: int,
                 ce_prior_total += loss_p.item() * B
                 n_prior += B
             if iwae_k and (not iwae_batches or bi < iwae_batches):
-                iwae_total += iwae_bound(model, cfg, x, y, iwae_k, ctx).sum().item()
+                fn = iwae_posterior_bound if iwae_posterior else iwae_bound
+                iwae_total += fn(model, cfg, x, y, iwae_k, ctx).sum().item()
                 n_iwae += B
         n += B
     out = {"run": run_dir.name, "model_type": cfg.model_type,
@@ -149,8 +170,10 @@ def main() -> None:
     ap.add_argument("--batch-size", type=int, default=16)
     ap.add_argument("--prior-samples", type=int, default=1)
     ap.add_argument("--max-batches", type=int, default=0, help="0 = full val sweep")
-    ap.add_argument("--iwae-k", type=int, default=0, help="K prior samples for the IW bound (0 = off)")
+    ap.add_argument("--iwae-k", type=int, default=0, help="K samples for the IW bound (0 = off)")
     ap.add_argument("--iwae-batches", type=int, default=0, help="limit IWAE to first N batches (0 = all)")
+    ap.add_argument("--iwae-posterior", action="store_true",
+                    help="use the posterior as IWAE proposal (tight at any KL)")
     ap.add_argument("--out", default="runs/eval_prior.json")
     args = ap.parse_args()
     device = resolve_device(args.device)
@@ -161,7 +184,8 @@ def main() -> None:
         if not (run_dir / "best.pt").exists():
             continue
         r = eval_ckpt(run_dir, args.data_dir, device, args.batch_size,
-                      args.prior_samples, args.max_batches, args.iwae_k, args.iwae_batches)
+                      args.prior_samples, args.max_batches, args.iwae_k,
+                      args.iwae_batches, args.iwae_posterior)
         results.append(r)
         extra = (f" prior={r['ce_prior']:.4f} kl={r['kl_bits']:.3f}b"
                  + (f" iwae{r['iwae_k']}={r['nll_iwae']:.4f}" if "nll_iwae" in r else "")

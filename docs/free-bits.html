@@ -57,7 +57,7 @@ RTX&nbsp;4080&nbsp;SUPER, and an Intel Arc&nbsp;Pro&nbsp;B70 — including, as f
 documented LLM pretraining on Arc B-series silicon), with 3 seeds on every headline claim.
 Findings: <b>(1)</b> the architecture's logged loss is an ELBO-like quantity that flatters it
 by its full KL — naïve comparisons are broken by construction; <b>(2)</b> on honest accounting
-the latent is a <b>tax of ≈0.19&nbsp;nats</b> at 124M, but the tax curve <b>bends at κ≈1</b>: the
+the latent is a <b>tax of ≈0.19&nbsp;nats (≈21% worse perplexity)</b> at 124M, but the tax curve <b>bends at κ≈1</b>: the
 marginal bit of latent budget between κ=0.5 and κ=1 is recovered at 85–99% depending on
 seed history, and the average recovery improves from ~55% (51M) to ~69% (124M) — a quantitative bridge to the paper's
 large-scale gains; <b>(3)</b> posterior collapse is a <b>seed lottery, not a fate</b>: every
@@ -121,6 +121,23 @@ the paper never runs this control because at 8B the encoder overhead is negligib
 (+5.7%) it is not.
 </p>
 
+<div class="tldr">
+<b>How to read the numbers.</b> A language model is scored by how <i>surprised</i> it is by
+each token of held-out text; the units of surprise are <b>nats</b> (like bits, but base-<i>e</i>:
+1 nat ≈ 1.44 bits), and lower is better. Differences compound per token, so a gap of 0.19
+nats/token means the model is about 21% more perplexed by typical text
+(e<sup>0.19</sup> ≈ 1.21). <b>KL (bits/token)</b> measures how much information the model's
+latent <i>Z</i> actually carries: 0 means the latent is ignored; κ means it uses its full
+allowance. The <b>free-bits budget κ</b> is that allowance — KL below κ goes unpenalized
+during training. <b>Posterior collapse</b> is the latent falling out of use (KL → 0).
+The <b>honest NLL</b> matters because during training <i>Z</i> is computed by an encoder that
+reads the entire text, including the tokens being scored — so the raw loss is flattered by
+up to the full KL; adding the KL back (the <b>ELBO bound</b>) gives a score that is
+guaranteed not to understate the model's true loss. Finally, a <b>seed</b> is the random
+starting condition of a training run; rerunning with different seeds is how we measure how
+much of a result is luck.
+</div>
+
 <h2>3&nbsp;&nbsp;Trap #1: the loss your training loop logs is not a language-model loss</h2>
 <p>
 During training and evaluation the free model's <i>Z</i> comes from the encoder — which reads
@@ -146,7 +163,8 @@ the posterior region.
 <h2>4&nbsp;&nbsp;The latent tax, and the bend at κ≈1</h2>
 <p>
 On honest accounting, at 124M/2.46B tokens the live-latent Free Transformer pays
-<b>≈0.19&nbsp;nats (band 3.34–3.47) against the baseline band (3.17–3.22)</b> — roughly four
+<b>≈0.19&nbsp;nats (band 3.34–3.47) against the baseline band (3.17–3.22)</b> — in plainer
+terms, about 21% higher perplexity, and roughly four
 times our measured seed noise, and far clear of the params-matched control. But the
 <i>shape</i> of the tax across budgets is the finding:
 </p>
@@ -192,7 +210,7 @@ recovers, one recovers early, and one sat dead from iteration 2,000 to 2,400 and
 spontaneously resurrected to full budget. The free-bits hinge is one-sided — nothing pushes
 information back into a dead latent — so whether Z lives is decided by whether reconstruction
 stumbles onto a use for it before the encoder's gradients vanish. κ=1 survived 3 of 3 seeds — though not unscathed: one crashed to 0.01 bits by iteration
-1,000, recovered fully by 3,000, and its final honest NLL carries a ~0.08-nat scar from the
+1,000, recovered fully by 3,000, and its final honest NLL carries a ~0.08-nat scar (≈8% perplexity) from the
 dead interval. A larger budget improves the recovery odds; it does not prevent the crash.
 </p>
 <figure>

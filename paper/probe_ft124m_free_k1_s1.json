@@ -1,0 +1,238 @@
+{
+ "ckpt": "runs/ft124m_free_k1_s1/best.pt",
+ "H": 16,
+ "kappa_bits": 1.0,
+ "bit_stats": {
+  "mean_p": [
+   0.5007486939430237,
+   0.4999036192893982,
+   0.5001898407936096,
+   0.4998103976249695,
+   0.5002729892730713,
+   0.5041788816452026,
+   0.5001767873764038,
+   0.5001514554023743,
+   0.49995189905166626,
+   0.5094883441925049,
+   0.5001196265220642,
+   0.5000264644622803,
+   0.4995819926261902,
+   0.5014655590057373,
+   0.5000949501991272,
+   0.5001025795936584
+  ],
+  "hardness": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.2819051146507263,
+   0.0,
+   0.0,
+   0.0,
+   0.2595174014568329,
+   0.0,
+   0.0,
+   0.0,
+   0.275360107421875,
+   0.0,
+   0.0
+  ],
+  "kl_bits": [
+   8.487523700750899e-06,
+   9.239986866305117e-06,
+   1.9684214294102276e-06,
+   1.919647047543549e-06,
+   1.2748068911605515e-05,
+   0.32977619767189026,
+   8.909398275136482e-06,
+   4.571926638163859e-06,
+   5.963593594060512e-06,
+   0.33133307099342346,
+   1.741008418321144e-05,
+   1.2940103260916658e-05,
+   3.4129930099879857e-06,
+   0.3367241322994232,
+   5.731221790483687e-06,
+   6.805405973864254e-06
+  ],
+  "temporal_coherence": [
+   0.5550179481506348,
+   0.5013725757598877,
+   0.4998696744441986,
+   0.5217579007148743,
+   0.5048835277557373,
+   0.5026515126228333,
+   0.4886608123779297,
+   0.49734848737716675,
+   0.4947315752506256,
+   0.49237537384033203,
+   0.4998900294303894,
+   0.5050382614135742,
+   0.5329301357269287,
+   0.5028429627418518,
+   0.5160862803459167,
+   0.5070890188217163
+  ]
+ },
+ "bit_feature_corr": {
+  "position": [
+   -0.002958898474731525,
+   -0.0010966432045384357,
+   -0.013889460990836336,
+   0.0004623941637849671,
+   0.005280434791774811,
+   0.009815812905383168,
+   0.00412971748952246,
+   0.007602581961566244,
+   0.00021535678346178833,
+   0.002280845582783755,
+   0.007212135210142629,
+   -0.005460126579661291,
+   0.002309993792381826,
+   -0.0035117672433699486,
+   0.01023962550488781,
+   -0.004496560272605801
+  ],
+  "starts_space": [
+   -0.0066247857905258525,
+   0.01082704599903571,
+   0.006239211350582666,
+   -0.012911629761867228,
+   -0.0052273834692210105,
+   0.005094448266957986,
+   -0.003781738195698995,
+   0.011569492471929527,
+   0.005983212421138997,
+   0.01161143443245662,
+   0.009488522739539628,
+   -0.0036274315107266224,
+   0.007712534892205481,
+   -0.0022925866696689927,
+   0.0060966506162097416,
+   -0.007323025778565304
+  ],
+  "is_alpha": [
+   -0.013008519921562229,
+   0.012972314051515698,
+   0.01811355562985608,
+   -0.014195292266629633,
+   -0.0023275819606406304,
+   0.0058818878713284535,
+   -0.002186645342807688,
+   0.011930699509678573,
+   0.007709238575864372,
+   0.010969995008753057,
+   0.013010468144860971,
+   0.0024577925730827174,
+   0.01052239174974775,
+   0.0011706389399437126,
+   0.0019344284834837454,
+   -0.0069216699894123325
+  ],
+  "is_break": [
+   0.016251043181348936,
+   -0.014451045174393332,
+   -0.020234069868399356,
+   0.014918835816621234,
+   0.002357921565675081,
+   -0.008134140099385167,
+   0.0013910987392354458,
+   -0.014333178944024076,
+   -0.010054253177005095,
+   -0.013540017320355757,
+   -0.013469570642992628,
+   -0.0035636380572030904,
+   -0.012915175152661513,
+   -0.0033448858865052816,
+   -0.004052404069869085,
+   0.010339432840854498
+  ]
+ },
+ "ablation": {
+  "base_ce_posterior_bits": 2.7242157012224197,
+  "delta_ce_per_bit": [
+   0.0009834766387939453,
+   0.0026807785034179688,
+   -0.0009307861328125,
+   -0.005496501922607422,
+   -0.0026421546936035156,
+   0.36933445930480957,
+   -0.003057718276977539,
+   -0.00031065940856933594,
+   -0.003198862075805664,
+   0.3717336654663086,
+   -0.0006890296936035156,
+   -0.0005948543548583984,
+   -0.002923727035522461,
+   0.3803110122680664,
+   -0.001445770263671875,
+   -0.0028259754180908203
+  ]
+ },
+ "steering": {
+  "intra_pattern_jaccard3_mean": 0.0012734494731490402,
+  "inter_pattern_jaccard3_mean": 0.0012441572626287552,
+  "n_intra_pairs": 72,
+  "n_inter_pairs": 192,
+  "examples": {
+   "The most important thing to understand about": {
+    "fixed_pattern0": [
+     " \u201cgenius\u201d in the context of the Bible is that it is only mentioned in one breath as the author.\nAs for how \u201cphonemes or the phonic term, the word in the first verse of Genesis comes to pass,\u201d Jesus explained. And from that point on, the meaning of \u201csingular\u201d is quite straightforward.\n- \u201cThe sounds of the tongue must be accompanied by sounds.\u201d\n- \u201cIt is therefore safe that there are fewer sounds in the tongue while pronouncing the syllables of speech. It",
+     " the stars is that stars within the star itself have a small gravitational field. This means they can pass through the center of the sun and experience its light. It\u2019s a little like having a butterfly in your hand. It can\u2019t interact with the light and it needs to go through its entire life for the rest of its existence. It doesn\u2019t need to be in a giant or luminous orbit to get the light. Stars in the star have a similar spectrum of light with no moving objects. However their light is moving through their environment much more rapidly. This is because"
+    ],
+    "fixed_pattern1": [
+     " this is that the \"soul\" has the ability to fulfill both the needs of the individual and of society.\nThe \"soul\" is a collective effort to perform the required human activities required in order to fulfill the social needs of society.\nThese functions include (1) to fulfill the needs of the society, (2) to fulfill the needs of society and to the individual,\n- \"I am a social animal\";\n- \"I am not a biological species but an animal.\"\nThe human being is a social animal. The human being must be a human being to fulfill",
+     " them is that they are, like all forms of wildlife, unique to each of the three great apes. They are all the same species.\nThe first was a chimpanzee. He was a gorilla.\nSome monkeys live only one-to-many lives, others are the same species. Some species even live more than 20 years.\nA few of the more common species are the monkeys and other species found on the ground. Some are even hunted and eaten.\nMore primates (though not much!) are found on the ground. The monkeys live so long there is a little space between them"
+    ],
+    "resampled": [
+     " coronavirus is that it is an infectious disease. It is the same virus that affected a human being, but its symptoms, symptoms, or treatment are the same. It is an important cause of coronavirus that has been the cause of the global pandemic. It is a respiratory disease of the respiratory and circulatory system in the human body, and has been affecting humans for decades.\nOur bodies have no way to remove coronavirus. It has been around since the 1930s, when there was a mass outbreak of the coronavirus in the world. Even though it was a",
+     " our bodies is that there are certain tissues in our body that support them. Our bodies produce the most of these vital compounds and they are intimately connected with each other. Longevity is about health, and longevity and longevity we want.\nSo, in order to get the most out of the body care we need to have a health routine, it is important that we understand our body functions. Our bodies function well, and our mind and body are both powerful and strong; they provide the strength we need for a long, healthy, robust, and happy life. That\u2019s the essence of human"
+    ]
+   },
+   "In this tutorial, we will learn how to": {
+    "fixed_pattern0": [
+     " get a password for the web application to be sent over a web-site to the web server. We will provide a tutorial on how to install a web browser with a simple Java application with Java implementation and test your program. This tutorial starts with an overview of the Java Java applet, which is what we\u2019ve discussed in this chapter.\nThe tutorial then covers all the basics like how to check the permissions of Web pages, download the software installed and install the web site. We also cover how to test the software in order to find the correct permissions for the software in this applet",
+     " use a microscope to create the different parts of the microscope. You can add all the elements of the microscope to the end of your slides in this tutorial.\nStep 1: Make your own slide -\nThis is a simple function for a slide. In this tutorial, we will show you how to use a taperscope to create an entire section of your slide. You can create a separate slide by using the following steps:\n- Insert the taperscope, and the first element of the magnification is inside the microscope. You will need to control the size of the specimen in the sample you"
+    ],
+    "fixed_pattern1": [
+     " set up a Raspberry Pi and some basic Raspberry Pi tasks. The first thing you need to do when setting up this Raspberry Pi is create your first pin. Then we will move on to make a complete Raspberry Pi.\nThe first milestone is making sure to make sure your first pin is ready to be used with Raspberry Pi. This will ensure the Pi will have a nice high quality pin for the whole project.\nNow, make sure that you have an idea of where to build your connected pin. I will show how to build an even bigger size connected pin to complete the connections. Now, I",
+     " create a new Python script and how to create a Python script. We will need to find a Python name and create a Python script for this function.\nTo create a Python script, we will need to find the Python name (Python.name or Python.name) in Python script. To create a Python script, we will need to enter the string, a, and the string, a (optional). We will need to create the Python script. I will have to look at how to create the Python script.\nWhat is Python Script?\nPython scripting is the programming language used to create"
+    ],
+    "resampled": [
+     " modify Excel using the following steps, and how to create and execute a pivot, function, and more.\nTable of Contents\nIn the Microsoft operating system, Excel is a simple addition to the existing cell in the Excel table. We will show you a detailed explanation about adding a table in one of the examples below. To understand and apply Excel concepts of the Microsoft Operating System, it is very important to grasp how to create a table with a new cell that is unique to a cell. The process of filling this article explains the steps and how the Excel formula allows Excel to identify the column in the",
+     " use the following web app:\n- Step 1:\n- Choose a new browser and then enter a name for the new browser that will give you the new browser you choose so that you can have a more precise view with your new information and the list of available browser options is created in the view.\n- Click on a specific browser or window that we have named for you.\n- From this window, click on a particular new page.\n- Click on a new browser or window and choose any website that you want to explore in your head, unless you are in the search box of"
+    ]
+   },
+   "The history of the city begins with": {
+    "fixed_pattern0": [
+     " the settlement of Quaker settlers in the early Twentieth century, and the Quaker community as a whole came to light after the Civil War in part because it had become a town for everyone in that period.\nSo in the first two hundred years since the town grew, many visitors from all around the city have been given a chance of seeing it. It was made of brick in the shape of a city in the late 18th century, with two main types of brick-lined streets.\nThe first set of white walls in the town was built in the twelfth century. The second",
+     " an inscription that identifies it for the first 400 years of the Roman city. It reads, \u201cIn the year that I passed over the city of Mycenae, which was called Oda, I, a citizen of the popula and an I, the \u2018s. was appointed to the city,\u2019 \u201d\nWhen the Istmetius king Eumenes II decreed that the people of this city must give it the title of \u201cSporadic\u201d, the word should be translated in English as \u201cRome, where the Istmet"
+    ],
+    "fixed_pattern1": [
+     " three important periods in the development of the city: the early 1900's, the first full-scale socialist settlement in 1870, the Second World War, the First Great World War and the Cuban Revolution, and the Cuban Missile Crisis (1910-1917). The city flourished as a theater of service, a center for internationalism, and a center of the intellectual and cultural renaissance of the twentieth century and the industrial age of the late 19th and early 20th centuries and its impact on Cuban culture. It is an important place where Cuban culture runs in close association and has a deep connection to Cuban",
+     " the first mention of the earliest inhabitants; it begins with the earliest recorded tradition of building a church, which dates to the time of Abraham\u2019s first marriage to Abraham and the first major Christian settlement of Palestine. During the Babylonian exile, the prophet Jeremiah visited Jerusalem in the early fifth century. After the end of his reign, the first Jerusalem of Palestine was proclaimed a city on the 1st day of Moses\u2019 first plenary year.\n2. The first Jewish settlement in Jerusalem is not until the first week of the first week after the first plague of bubonic plague. According to"
+    ],
+    "resampled": [
+     " its first and last trading post.\nThe first saw the lumber and lumber industries that entered in the city in the early 1800\u2019s, and the railroad that finally drove the city\u2019s railroad came in 1905.\nToday, the historic Town Hall is an impressive building that provides its architectural design as it was once owned by the proprietors of both the Chicago and Detroit Railroad.\nFrom 1912 to the 1920s the railroad was operating in Manhattan, and the railroad was built between the two cities.\nIn 1912 the Brooklyn Railroad was built, which led to the Brooklyn Bridge in Manhattan.",
+     " William Penn and later with the building of St. John\u2019s Church, dedicated to the early church of St. Thomas and the first church in the area that was constructed in 1640 by Mr. Penn. The site eventually became an active parish church in 1748 and St. Philip was built in 1854.\nThe beginning of a church and city centre began with the brick churches of the Old and New Testaments, the churches of the High and the later churches of Jesus and Jesus. St. John\u2019s Church (d. 1802), the first church built by both Freder"
+    ]
+   },
+   "Scientists have recently discovered that": {
+    "fixed_pattern0": [
+     " at least 22 different microorganisms are involved in the \u201cnon-photosynthetic\u201d metabolism in this part of the brain. The most important are the microorganisms known as mycotoxins.\nThe first microbe found in Earth\u2019s oceans is an example of microbial metabolism. The bacterial microorganisms known to be responsible for photosynthesis in the ocean can also cause the depletion of chromatids (from the chromatin in the cell), which cannot be taken up into the cells in the body.\nThe second-generation food source is the bacteria (reptiles) found",
+     " this same phenomenon is responsible for an uptick in the number of middle-aged smokers in the United States (1).\nThere are several types of smoking, they include:\n- Chemical cigarettes: These are considered to be the most common type of tobacco and can cause lung cancer. They contain carcinogens, nicotine and alcohol. They use as a means of smoking tobacco.\n- Meth cigars: A type of cigar used to produce tobacco is known as a syringe. It has a flexible membrane and a long pipe. The tobacco is then rolled. It is smoked for the smoke to reach the heart"
+    ],
+    "fixed_pattern1": [
+     " bacteria may have a host of health benefits, including boosting the immune system, slowing down the aging process, and preventing infections.\nWe\u2019re familiar with the bacteria that protect against infections. But are they good for our immune system or are there other benefits of them just not? One reason is that the bacteria can be more beneficial to our immune system. It inhibits the growth of bacteria in the body that cause them to grow and spread. If you want to be healthy this way \u2014 it is very important to check your blood sugar level regularly and limit sugars to help keep your sugar levels under track",
+     " some of the most well known viruses, such as HIV-associated viral diseases, are being re-emitted in a bid to boost their range as well.\nThe new viral proteomics technology, which will be able to quantify the viral genome in a fraction of a million cells, will be used to determine their sub-types, or their types, and then compare the number of viral DNA in a particular sub-type to a target cell.\n\u201cWe are very excited that our research aims to analyze and display the viral genome in a manner that can be replicated in a variety of ways"
+    ],
+    "resampled": [
+     " the endocrine glands are the primary endocrine organs, which are responsible for the metabolic rate. It is necessary to find out the details of how the Endocrine System is responding to external factors. The research is important that can be obtained in conjunction with the endocrine glands, which is why it is crucial that the endocrine glands are not being attacked or severely affected. This is because the Endocrine system itself remains dysfunctional and defective.\nWhat is Endocrine dysfunction?\nThe endocrine system plays an important biological role in the endocrine system. It is responsible for regulating the metabolic rate, the",
+     " the food and the microbes in the guts are connected in three distinct phases: decomposition and metabolism.\n\u201cThe food is eaten in the first phase and then the microbes that then break it down down into a final component of the decomposition, the \u2018molecule\u2019, which is called a pyrope. After the bacteria are eaten, they further decompose the pyruvia into a greater number of metabolites, such as ammonia, methane, and water vapor, which constitute the final phase of life and serve as energy storage for the microbes. \u201c\nThe researchers believe"
+    ]
+   }
+  }
+ }
+}

@@ -582,3 +582,21 @@ inversions otherwise at low KL). Third consecutive clean Arc window.
 - Ops note: baseline s3 hung once in a CUDA call on the 5060 (0% util, log
   frozen; SIGKILL + checkpoint-resume, ~2h redone — no GPU wedge, unlike
   the Arc failure mode).
+
+---
+
+## 2026-07-13 — RQ2 probes + Paper 2: "The Decision That Wasn't"
+
+Probed all live latents (per-bit KL accounting, single-bit ablations, fixed-
+vs-fresh-Z steering; scripts/probe_latent.py). Findings: (1) the budget
+quantizes — κ=0.5 → 1 live channel, κ=1 pristine → exactly 3 channels at
+~0.33 bits; ablating a live channel costs its full KL; dead bits cost 0.
+(2) The κ=1 resurrected run carries the same 1.00 bits in a DIFFUSE
+8-channel code — the near-death left a structural scar beyond the 0.08-nat
+loss scar. (3) No decisions: persistence 0.49–0.78 (runs of 1–5 tokens),
+surface correlations ≤0.03, and steering is a clean null (intra-Z ≈
+inter-Z similarity everywhere). Interpretation: the latent is a per-token
+side-channel for next-token residual uncertainty — the same leak Paper 1
+priced. Falsifiable scale prediction registered: persistence, steering
+separation, and recovery rate must rise together if the mechanism becomes
+decision-like. Paper 2 published (docs/latent.html); cost ~2 GPU-hours.

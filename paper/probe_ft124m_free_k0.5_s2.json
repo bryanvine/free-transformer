@@ -1,0 +1,238 @@
+{
+ "ckpt": "runs/ft124m_free_k0.5_s2/best.pt",
+ "H": 16,
+ "kappa_bits": 0.5,
+ "bit_stats": {
+  "mean_p": [
+   0.5001136064529419,
+   0.4999260902404785,
+   0.49827539920806885,
+   0.4995899796485901,
+   0.49967077374458313,
+   0.5001118183135986,
+   0.4998779892921448,
+   0.49934637546539307,
+   0.4486071765422821,
+   0.4999310076236725,
+   0.5014461278915405,
+   0.5003990530967712,
+   0.5001605749130249,
+   0.49984660744667053,
+   0.49972963333129883,
+   0.5003193020820618
+  ],
+  "hardness": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   2.0345052689663135e-05,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "kl_bits": [
+   8.456890100205783e-06,
+   1.6342038406946813e-06,
+   1.7997208487940952e-05,
+   3.643170202849433e-06,
+   8.42257486510789e-06,
+   2.955436229967745e-06,
+   2.1775965706183342e-06,
+   8.415711818088312e-06,
+   0.4792022705078125,
+   1.1759007065847982e-05,
+   2.9679133149329573e-05,
+   3.5673233469424304e-06,
+   6.400864549505059e-06,
+   5.71361761103617e-06,
+   1.388578084515757e-06,
+   2.9673824428755324e-06
+  ],
+  "temporal_coherence": [
+   0.7009103298187256,
+   0.6510528922080994,
+   0.9868299961090088,
+   0.6239206790924072,
+   0.7709270119667053,
+   0.6056472063064575,
+   0.6872780323028564,
+   0.7375102043151855,
+   0.7759612202644348,
+   0.6939516067504883,
+   0.7345308065414429,
+   0.7882290482521057,
+   0.7870173454284668,
+   0.64701247215271,
+   0.7713017463684082,
+   0.5823924541473389
+  ]
+ },
+ "bit_feature_corr": {
+  "position": [
+   0.004720143308439229,
+   -0.0016434494135230016,
+   0.04035669935865208,
+   -0.026982024729861907,
+   0.00780585420304753,
+   -0.01262822259350498,
+   0.0013621892401114272,
+   -0.0198225669731315,
+   -0.01341597113434075,
+   -0.0024056236550498208,
+   0.0008026040383717211,
+   -0.0030570845966941323,
+   -0.021263449329525702,
+   0.019163207061479406,
+   -0.00401404846151105,
+   0.03940351073454088
+  ],
+  "starts_space": [
+   0.04817031415818512,
+   -0.01380244837335805,
+   -0.06332997984434348,
+   -0.014201553700365415,
+   0.03493892365337241,
+   -0.036344771737323166,
+   -0.041873826683432175,
+   -0.016028107997539162,
+   -0.01304039138487243,
+   -0.04465220431849844,
+   -0.00705055921291369,
+   0.0760783948372149,
+   -0.03217793698898724,
+   -0.011843602173108399,
+   -0.0682347390733255,
+   -0.006689806285231029
+  ],
+  "is_alpha": [
+   0.054995280825220705,
+   -0.01514012863867959,
+   -0.08005240372983732,
+   -0.02877520497146039,
+   0.03355452246742377,
+   -0.04152798850642797,
+   -0.03953803717286505,
+   -0.025762720173346403,
+   -0.005231333703788448,
+   -0.06359191667529825,
+   -0.00247487072014841,
+   0.09619049188412336,
+   -0.029885754385903837,
+   0.001827577932346866,
+   -0.08854852363629762,
+   -0.003891244361425021
+  ],
+  "is_break": [
+   -0.04976588680688965,
+   0.010073389103013851,
+   0.0857951468077142,
+   0.03163935320214867,
+   -0.026561086781569966,
+   0.04046780535368017,
+   0.037461994560326804,
+   0.03021395019285722,
+   -0.0007101005750876091,
+   0.06243766625930962,
+   -0.0026533012567335557,
+   -0.0908159507578128,
+   0.023556030032263624,
+   -0.009423703527268897,
+   0.08551893883032494,
+   -0.005239700748484478
+  ]
+ },
+ "ablation": {
+  "base_ce_posterior_bits": 3.0702118575572968,
+  "delta_ce_per_bit": [
+   -0.0009684562683105469,
+   0.0004839897155761719,
+   -0.001018524169921875,
+   -0.0018389225006103516,
+   -0.0009753704071044922,
+   -0.0013327598571777344,
+   -0.0013604164123535156,
+   -0.0006685256958007812,
+   0.4573194980621338,
+   0.001355886459350586,
+   -0.001220703125,
+   -0.0002467632293701172,
+   -0.0017325878143310547,
+   8.225440979003906e-05,
+   -0.0019922256469726562,
+   0.0016744136810302734
+  ]
+ },
+ "steering": {
+  "intra_pattern_jaccard3_mean": 0.006311496776180473,
+  "inter_pattern_jaccard3_mean": 0.004701681114568865,
+  "n_intra_pairs": 72,
+  "n_inter_pairs": 192,
+  "examples": {
+   "The most important thing to understand about": {
+    "fixed_pattern0": [
+     " them and what they mean for your application is to be honest, honest and not to make any assumptions about what you are doing.<|endoftext|>From the beginning, the importance of human rights and human rights has been recognised by many nations of the world. The United Nations Human Rights Council has recognised human rights, and human rights are human rights. From its inception, however, it has not been clear that human rights were recognized in the first place.\nThe World Court\u2019s report on human rights, therefore, has not been clear as to where the body is headed. In other words, it is",
+     " this and how, as a result of the research you are doing, you are very likely to have a good idea of who this information is, what that information is, and what is being measured.\nThink of these things as things that come from your environment you are studying. You are doing research, and you are being a researcher, so as an observer, you are doing what is really important. You are doing what you are doing, which is not the way you are doing it either.\n- Think about what you are doing right now that you are doing this research and how you are"
+    ],
+    "fixed_pattern1": [
+     " the various types of soil on the farm is the type of soil that is required. There are several soil types, like:\n- Clay, with clay, that is a mixture of sand, sand, gravel, and sand.\n- Silt-Free soil is generally more porous than most soils, because it will expand and contract quickly, creating a soil that is more porous than other soils.\n- Clay is the most common type of soil in the world and is highly resistant to clay. Clay\u2019s ability to expand rapidly in a short time also enhances its resistance to clay.\n",
+     " them is their nature. They are not just the same species but their habits and activities are different and at the same time, the ecosystem is very complex, and they are constantly changing.\nOn the other hand, the environment is one of the most dynamic parts of the ecosystem. The environment changes when a change is predicted, making certain things that you use as the basis for your life very important.\nWith this, it becomes important to understand how important these changes and activities are and whether they are related or related, such as how they impact on the ecosystem.\nWhen you are at a place"
+    ],
+    "resampled": [
+     " the concept is the basic idea of \u201canalogousity.\u201d At the heart of this, there is no substitute for a knowledge of the \u201canalogue\u201d of an abstract or object. In the present case, like the word \u201canalog\u201d, the object must be of a non-analogue character, and the object must be \u201canalogous.\u201d Furthermore, in the \u201canalog\u201d case, the object is an object, and the object is an object of the abstract idea that is an object, an object.\n",
+     " using an AI (and possibly a machine learning) is that the algorithm can help make predictions as if the machine is not working. With the help of an artificial intelligence, like a human, you can then make predictions about what will happen next.\nAI is like learning, but it\u2019s not all there. AI has the potential to answer the question:\nWhat\u2019s in the equation?\nIn the next post, we will discuss a question that\u2019s not all that surprising.\nThe answer is more precise because the AI learns and can do everything that is required to"
+    ]
+   },
+   "In this tutorial, we will learn how to": {
+    "fixed_pattern0": [
+     " write and read in English. We will learn how to read and write in English in a free English course.<|endoftext|>When we say something, we mean very little. But there\u2019s a more recent trend than just the idea that our heart rate will stop at a certain level, and we can\u2019t help it anymore.\nIn the first edition of this study published in the journal Diabetes Care in 2009, researchers at the University of Colorado School of Medicine found that among women with type 2 diabetes, the heart rate was in no better measure at that elevated rate\u2014that\u2019s to",
+     " draw and use the shape on the screen.\nIn this tutorial we will learn how to draw a shape on the screen, and then we will use the shape to create and edit a line or two of the text.\nWe will also learn how to draw a line on the screen, and then we will use the shape to create and edit a line of text. This tutorial is just a introduction to using the shapes that we have learned and what to do next.\nIn this tutorial we will learn about drawing and we will learn how to draw a line of text and draw a line of text"
+    ],
+    "fixed_pattern1": [
+     " set up a PIC to run in all Windows operating systems, from Windows to Windows XP. In this article, we will be using our toolkit and the most popular free PIC.\nStep 1: Start the PIC\nWe will now use the PIC from your browser. We will use the PIC for Windows and you will see that we will run our PIC. A common assumption is that you will make all the choices you make that make your choice.\nYou can make the choices that make the choice for you on a PC (like you can do with Windows) or",
+     " calculate the molar mass of a carbon-14 atom and then we will calculate this value.\n8. Calculate the mass of Carbon\nIn this experiment we will calculate the chemical formula of carbon and its two chemical components. The formula to convert is as follows.\nWe have to calculate the Molar Mass or mole of carbon, or Carbon-14 and I am using the formula is:\nMolar Mass = H2O\nM = Imol\nWe need to know that this formula is written in the same way as the formula above. Now the formula to convert this is as"
+    ],
+    "resampled": [
+     " set up a password. We will discuss how to create a password in the first part.\n5. It is necessary that the password should contain the\nname of the password in the first part of the text. For\nexample we will define the\nName of the password in the second part of the text.\nIt is important to remember that when the password is created in the first part it will be used outside of the\nfirst part. For example we can write a\nname of the password,\nname of the password,\nname of the password,\nname of the user.",
+     " write an essay writing a good paper, how to write a good essay, and how to write an essay.\nWhy writing an essay in hindi is good practice\nThe structure of an essay is simple and precise, with a clear and concise introduction. To write an essay, you will need to read and understand the topic, the main points of the essay and the main points of the essay. To write an essay in hindi, you will need to know the following:\n- The topic of the essay\n- The main points of the essay you should know on this:\n- Introduction"
+    ]
+   },
+   "The history of the city begins with": {
+    "fixed_pattern0": [
+     " its building, which was built in 1599 by Joseph III of Spain and was eventually demolished to become the largest city in the world, and with the building of the Spanish capital, which was the capital of the new Kingdom of Portugal. It was named after the famous Portuguese navigator Vasco de Gioia, who built it in 1410, and it was moved to the city in the 17th century to become the capital of the Kingdom of Portugal. The city of Lisbon is located, on the island, at the foot of the River Rio de Boca.\nIn the city is a",
+     " an invasion by the British in 1676.\nIn 1677, French explorer Ferdinand de Montesquieu attempted to reclaim the city, but it was discovered by the French, who called it \u201cChapel of the Sea.\u201d The French responded by giving the city in English, but the French refused.\nIn 1677, the French made a campaign to the west coast of France to convince the British to join the French in their effort to conquer the entire French empire and to seize France and the French territories they had conquered. A year later, in England, the French attacked"
+    ],
+    "fixed_pattern1": [
+     " the establishment of the city in 1587 in the city of Rome, and the city was created in 1217. In the course of this year, in 1641, Rome becomes the center of a wealthy and growing city of rich people. The city reached its peak during the time of the Roman Republic, when Venice, Venice, and Rome became the dominant trading city. The city of Venice was created in the city's very center during this time.\nIn the second half of the 20th century, the city underwent changes that changed its future. The city of Bath has a long history as a",
+     " the first settlers\nIt begins as the Old Man of the Woods and ends as the Age of the King\nIn the past, the Old Man of the Woods and the Age of the King\nIn the present day, the Old Man of the Woods and the Age of the King are\nThe Old Man of the Woods and the Age of the King is established\nThe Age of the King is established\nThe Age of the King is established\nThe Age of the King is established<|endoftext|>This month, the annual American Community Health Association (ACHC) is launching its annual American Community Health Association (AC"
+    ],
+    "resampled": [
+     " the first contact with the Black community. The residents of Blacktown have long lived in such a place that in the years immediately following its establishment, the town has been recognized as a city - an historic symbol of both the Black Community's and its Black community. The residents of Blacktown live from and interact with the historic African Methodist Episcopal Church, which is located in the city, the African Methodist Episcopal Church, which is located in the city.\nHowever, the history of the city between the late 1960s to early 1980s is not a matter of course; in the last several years, the",
+     " William Penn. In 1817 he built three-quarters of the city\u2019s large frame houses; he built a new courthouse there in 1834. Another firm of Penns was the firm of Perkins and Ricks. Their firm, John Ricks and Thomas Ricks acquired the property at the expense of a number of owners. In 1856-8 there was a firm of two-quarters and a half of the city\u2019s large frame houses. Their son Daniel was still in business, but he died, presumably in 1857, and he is buried next, at the present-"
+    ]
+   },
+   "Scientists have recently discovered that": {
+    "fixed_pattern0": [
+     " when you eat meat, it doesn\u2019t break down as easily, and this is what makes it harder for the body to fight off infections, chronic disease and cancer.\nIn a study published in the Journal of the American Medical Association journal (JAMA) Nutrition, researchers discovered that eating meat, fish, liver and eggs, and eggs, which contain omega-3 fatty acids, also were found to have the same anti-tumor properties as taking anti-cancer medications. In their study, researchers showed that adding soy-rich food to the diet did not affect tumor growth but did",
+     " in the last few years, there\u2019s been an increase in the frequency and spread of the virus. This is because in the last month, only 4,400 cases were reported, of which 4,800 were children under the age of five years old. The cause is unknown.\n\u201cIn 2018, the flu virus was not yet known, but the situation has changed considerably since then,\u201d said Dr. P.G. Yeates of the US Centers for Disease Control and Prevention.\n\u201cThere\u2019s not a single question on the subject of the flu,"
+    ],
+    "fixed_pattern1": [
+     " the world\u2019s largest black-tailed deer population is recovering.\nThe discovery of the endangered species, however, was made in 2017, when a French biologist, Dr. Pierre-Louise Bocquet, at the U.S. Geological Survey\u2019s Rocky Mountain Research Station in New Mexico, found the deer. Bocquet and his colleagues found that as much as 50% of the deer\u2019s population in the West was still in place. By comparison, the population of white-tailed deer in Northern America was about 70% still in place and in some areas it",
+     " the largest single-celled organism ever found was not just a tiny baby worm, but even a tiny baby worm.\nIn a study published in PLOS Genetics, a group of researchers discovered that the cells of the and mitochondria of a worm that had been genetically modified by human cells showed that the worm could indeed grow, reproduce and reproduce. That is a sign that the worm has a very long lifespan.\nThis is the first time the worm has been genetically modified to grow and reproduce.\n\"Our research shows us that the worm's genome is significantly altered in such a way that it"
+    ],
+    "resampled": [
+     " the brain produces the same amount of brain cells as the body. In addition, the researchers found that the brain\u2019s cells that process and store energy and store the same amount of sugar (sugar), protein and fat. The researchers believe this could help them discover new drugs that may help combat cancer in the future. Researchers also have a dream to develop such a device. \u201cWe were looking at a device for brain and muscle cells,\u201d Dr. J\u00fcrgen Skol, an expert in mitochondrial energy, told Reuters Health.\n\u201cIn the first experiment we got the",
+     " the genetic changes and the brain and nervous system are responsible for regulating body temperature, and that by adjusting the body\u2019s temperature we can control the body temperature. One of our colleagues at the Institute of Neuroscience, Antonio Rosario, has been studying this complex interaction, which is one of the major mysteries of the human brain. One of his lab\u2019s key functions, he discovered a mechanism by which a certain enzyme (called acetyl CoA) helps regulate body temperature and temperature.\nTo do so, he and his colleagues, from the University of California, San Francisco have used a"
+    ]
+   }
+  }
+ }
+}

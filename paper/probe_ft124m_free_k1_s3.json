@@ -1,0 +1,238 @@
+{
+ "ckpt": "runs/ft124m_free_k1_s3/best.pt",
+ "H": 16,
+ "kappa_bits": 1.0,
+ "bit_stats": {
+  "mean_p": [
+   0.5005983114242554,
+   0.49794209003448486,
+   0.4949387311935425,
+   0.517877459526062,
+   0.5068104863166809,
+   0.5110530257225037,
+   0.5042182803153992,
+   0.5039446949958801,
+   0.49808934330940247,
+   0.4946301579475403,
+   0.49770256876945496,
+   0.49517765641212463,
+   0.4922477900981903,
+   0.4912090301513672,
+   0.49759727716445923,
+   0.5005567073822021
+  ],
+  "hardness": [
+   0.0,
+   0.0,
+   0.0,
+   0.38672688603401184,
+   0.0,
+   2.0345053144410485e-06,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "kl_bits": [
+   2.216412894995301e-06,
+   1.9621091269073077e-05,
+   0.043376363813877106,
+   0.3648917078971863,
+   0.10588639229536057,
+   0.19750231504440308,
+   0.011049693450331688,
+   0.020479820668697357,
+   1.4007866411702707e-05,
+   0.023995494470000267,
+   0.0060049546882510185,
+   0.015860388055443764,
+   0.13790705800056458,
+   0.07084310054779053,
+   1.945093390531838e-05,
+   1.1220666237932164e-05
+  ],
+  "temporal_coherence": [
+   0.7213200330734253,
+   0.8159824013710022,
+   0.5253950953483582,
+   0.533137857913971,
+   0.5321195721626282,
+   0.531180739402771,
+   0.5348749756813049,
+   0.5242974162101746,
+   0.984874963760376,
+   0.5306268334388733,
+   0.5272299647331238,
+   0.5384998917579651,
+   0.5334901213645935,
+   0.5333577990531921,
+   0.999812662601471,
+   0.5248106122016907
+  ]
+ },
+ "bit_feature_corr": {
+  "position": [
+   -0.002706575865663501,
+   0.021038796049355477,
+   0.012812736978539001,
+   0.003618596007045508,
+   -0.012334330317840675,
+   -0.013012679134752042,
+   -0.016970857218975566,
+   -0.014497422803914998,
+   -0.0033538628292171468,
+   0.01890596335325537,
+   0.016147625597340242,
+   0.01565905598250682,
+   0.011651001264563362,
+   -0.003599711120296786,
+   -0.001224546434126003,
+   -0.003483230935590165
+  ],
+  "starts_space": [
+   -0.027289019502344622,
+   -0.011268776145624722,
+   -0.024019727620587756,
+   0.015216082003642035,
+   0.02396733096930646,
+   0.023664419048428892,
+   0.018381630336115586,
+   0.025212722222912105,
+   -0.004734333208399948,
+   -0.02331075058698327,
+   -0.024576473311136382,
+   -0.016382655061323012,
+   -0.022153093585949458,
+   -0.015408756846269724,
+   -0.00639972068622076,
+   0.009131565579307605
+  ],
+  "is_alpha": [
+   -0.02133703177364679,
+   -0.006339229058110055,
+   -0.01663862587539245,
+   0.012344495300297825,
+   0.01873355754782507,
+   0.01910094257105833,
+   0.009525961795411297,
+   0.016323658515619822,
+   -0.00651827095662146,
+   -0.012156881831928222,
+   -0.015675916756928587,
+   -0.011184724510988439,
+   -0.01738111414772068,
+   -0.01333508542899265,
+   -0.008962799506948158,
+   0.01189449847275223
+  ],
+  "is_break": [
+   0.020290267926194795,
+   0.00895318259115795,
+   0.01657066422263983,
+   -0.013200783044177279,
+   -0.01943479548332475,
+   -0.019745057224402982,
+   -0.01249035307991925,
+   -0.01670005866915743,
+   0.00456152380866799,
+   0.014077479643047919,
+   0.01745102950990282,
+   0.013657080761825901,
+   0.018387510854696566,
+   0.013969852585833845,
+   0.009672815612856881,
+   -0.010735175538354331
+  ]
+ },
+ "ablation": {
+  "base_ce_posterior_bits": 2.802544042468071,
+  "delta_ce_per_bit": [
+   -0.0038290023803710938,
+   -0.0006608963012695312,
+   0.02189803123474121,
+   0.4517052173614502,
+   0.06953001022338867,
+   0.1521916389465332,
+   0.002862215042114258,
+   0.011035919189453125,
+   -0.003048419952392578,
+   0.013352632522583008,
+   0.004891872406005859,
+   0.008045434951782227,
+   0.09733724594116211,
+   0.04132413864135742,
+   -0.0047223567962646484,
+   -0.001111745834350586
+  ]
+ },
+ "steering": {
+  "intra_pattern_jaccard3_mean": 0.0009398799704033357,
+  "inter_pattern_jaccard3_mean": 0.0014787343839583916,
+  "n_intra_pairs": 72,
+  "n_inter_pairs": 192,
+  "examples": {
+   "The most important thing to understand about": {
+    "fixed_pattern0": [
+     " the food chain is that it will be so long, and that it is not a fully developed one, as it will be a self-sustaining one. It is a complex system, trying to develop and maintain ways of sustaining these basic systems in the world. In particular, we need to understand how our food system reacts to different external environments:\n- The temperature - the temperature of the air is more important than the air temperature and the temperature of the air does not change the same. A warmer atmosphere can 'leak' to the air.\n- The temperature - the temperature of",
+     " this and how, as with all the other things in the world, the fact that they all exist as part of an idea, is to make them clear. However, the reader will learn that there is one part that you can't do to ensure your understanding, and that is because you need to make it clear before you start writing.\nThere is a point that every writer makes when writing a literature essay. If you really want to put a character in the essay, be sure to ask. Write a story that is well-known, relevant, relevant, and unique. It's hard to"
+    ],
+    "fixed_pattern1": [
+     " the various variables involved, however, is the relationship between the variables rather than the statistical data themselves (or, more simply, the statistical data).\nWhat is the purpose of the program?\nThe purpose of the program is to increase data throughput, as the result of the many steps to which the program already has already been built, and to provide access to the system and all the data we have, to the extent that it will be able to enable automated analysis and analysis, by providing new features (like the new \u201cvital\u201d tab) as well as providing new information (in",
+     " the health of this country is that there is no shortage of children under the age of five and the infant mortality rate in the US is very high. The statistics are very uneven. Some of these cases are not represented by the general increase in the deaths due to lead poisoning or the use of lead in hard-to-reach areas, but the percentage with the general increase in cases is at least 1 in 20-40% (from 1 in 5,000 cases in 1991 to 3,000 cases in 2000), and the infant mortality ratio, or absolute mortality, over the span of two years,"
+    ],
+    "resampled": [
+     " the concept of sleep is that the brain is like a \"snout\" in a frenetic fashion. These snouts are always in the air and you get a good night's sleep. Not sleeping like you were born with it. A lot of the time these snouts are born with a lot of food and a lot of sleep because of what are called the \"sleep brain\" and how the brain grows. Most of us are born with a constant craving to sleep, but you can usually sleep for 12 hours. A little sleep, or a lot of, will help your brain. When you",
+     " them is that they exist on a continuum from one state to the next in the world, as if they were also a single individual.\nThe \u201ctime has come,\u201d as I have written with my friend, who was the founder of The Future Earth Club. The time has come to change that, and so has humanity itself. The time comes to change that.\nThe time has come to change everything that exists on a social scale. How come there is no one time that is also one time that is different from the time before, for each one is different from the others,"
+    ]
+   },
+   "In this tutorial, we will learn how to": {
+    "fixed_pattern0": [
+     " write a blog with different web application. Most of the time we do that to our kids, but we will provide tutorials to have for parents!\nWhat is a blog?\nThe term blog is actually a group of words (not simply a blog or a site but an app) in the same category as a website, and it comes in different styles, and it is aimed at kids, developers, people, and bloggers alike. Blogs have a great deal of meaning in them. For example, when a blog actually exists in the browser, it could be used by a child\u2019s",
+     " do two or more commands on different\n-m.sh -r to run our commands as long as we use\n-m:\\$ - \\\\r$\\ -$\\$ -$\n-m, \"r\", y\n-m, and \"r\" to run our commands\n-m:\\$ \\$\n-m, \"r\", y\n-m, \"\", y\n-m, and y\n-m, \"r\" to run our commands as long as we use\n-m.sh -r\n-m, \"r\""
+    ],
+    "fixed_pattern1": [
+     " work with water from a distance and how to get it out of the ocean while also dealing with other animals, such as sharks.\nYou will need a telescope to view the ocean floor. You will be able to use it as a monitor with your computer on-board\nYou will be able to view the ocean floor with your smartphone and allow you to see the ocean floor while also getting the ability to use your computer to make a variety of different predictions from the distance that you will travel through the water. You can use the calculator to create a chart for the ocean floor that is easy to read",
+     " do this, what will happen to your software development, and how to troubleshoot your software.\nWhy it's important to use this tutorial?\nTo avoid having problems with more complex applications, make sure to use the command line. We can use the command line to run this tutorial, and you can also use it to run the command line. We can also use it to run a few of the existing tasks and programs that are often done at your company.\nHow to check your app's security?\nUse the \"Check your App\" link in the browser window to get the latest"
+    ],
+    "resampled": [
+     " set up a custom account with a specific number of $1,000$ and then we begin creating a number of sets. The following example can be used to setup the password used for the password, the following example can be used.\n- Create a new password for your account and create one from the password that you have set and apply to the account to access the account, and your password will be automatically created from the password for this account, but the password that you create for it will remain the same.\n- From the previous example above, create your password and apply to the account and",
+     " write a simple web application for the Linux distribution, and how to build a simple application with a single script. Using this tutorial, you can learn about how to build a simple web application with the help of a single script in Python.\n1.2. What are the main methods and scripts used for writing a web app\nThere are many different methods for writing a simple Java application, and there are some important ones that you can use to create your own web app, and you can use them for any purpose as long as you have access to them and the most basic ones. However, before"
+    ]
+   },
+   "The history of the city begins with": {
+    "fixed_pattern0": [
+     " a building called Quarry Hill where the old town of New London, a kind of wooden building known as the Orchard Hill or the Old Town of London, stood, and, from the building, took the name of Quarry Hill, the centre of the town. Many people came to Quarry Hill to find out the history of their village, or settlement. Many were given the name of a local city. One of the famous people of Quarry Hill was the governor of its early town. He was a famous man and had a family.\nThe settlement of the local village and its inhabitants",
+     " a dramatic construction in the late 16th century. For some, it was only the most significant period since its heyday. During the Han Dynasty, however, this was a landmark for the modern city of Qansu, a name associated with the Great Wall, or \u201cpillar of the Golden Gate\u201d (not to be confused with the Great Wall). For others, the name is a recurring theme. The first modern city of Qansu was the Great Wall of China in 1776, which was built to protect Chinese sovereignty.\nIn the 19th century, a great wave of"
+    ],
+    "fixed_pattern1": [
+     " the late 1700s through the process of the construction of the city's first subway and then through the early 1900s, the construction of the new city's second subway. The first two structures were built in 1819 with the first being called the \"Old Manhattan Subway\" in 1821 and saw service starting from its twin subway system until it was shut down in the mid-1820s during the mid-1940s when construction began on the Brooklyn subway system.\nThe first public subway system opened in 1847. It was electrified in 1866 when the first subway was built in Cal",
+     " the ancient Roman city called Thebes, or the city of Thebes according to ancient Babylonian law:\n\u201cAnd for the first time, when it was in the land, they went out of their houses, into the rivers and the rivers from whence they came; and there the people put two horns over the whole city, and took the place of the city also with the ears of the gods; and the men began to eat the meat and drink the wine. And the gods took it upon themselves, and went out into the land to the sea, and there their host rose up,"
+    ],
+    "resampled": [
+     " the first contact with the people of the land of Israel and it is the first direct observation in the land of the people from above in the Valley of Israel. The first settlement of this land, which it came into contact with in the days of the Exodus, does not refer to a second settlement other than as a permanent settlement of the Israelite tribes, but to a number of tribes, with whom it is stated that the Israelites, or Canaanites, occupied an area of about seven miles, and it is called the Canaanitic region and the Canaanite region (which corresponds to the modern Canaan",
+     " a lot of battles and battles \u2013 including the Gros Adory (and the New York Hymn), which were held at the foot of Mount Tithon in 1776, and by the Macquarie brothers (who had been defeated by William and Thomas of Kourou and many others), who were fighting for the British cause in the area. The first battle took place in 1778 and saw the first battle of the Revolutionary War. The Battle of Mount Tithon was fought at the first battle of the Gros Adory, and in 1778, at the second battle of"
+    ]
+   },
+   "Scientists have recently discovered that": {
+    "fixed_pattern0": [
+     " a protein that is present in the bone marrow of the liver, and that this protein helps to regulate blood pressure with an optimum plasma level because of the ability of these two genes in the immune system \u2013 and it is known to be present in any number of these proteins.\nStem cells involved in the immune system also have a special function in the body.\nStem cells become specialized to deal with foreign foreign material. The spleens in the pancreas are a type of specialized cells that produce food and make food that your body can make. There are two main types of stem cells",
+     " the same amount of sugar in the blood plasma is released when you're done with exercise, and that it passes through your bloodstream at a blood-thinning rate\nThe team used a blood glucose monitor to monitor the amount of sugar that accumulates in the blood of the subjects. They determined that the average level of sugar in blood was 0.38\u20141g, meaning that they would be able to get between 1.23, and for the average glo-glo, the drops were only 0.74.\nThe team also found that the same amount of sugar was released when the"
+    ],
+    "fixed_pattern1": [
+     " some of the nutrients the body needs are only found in the small intestine, while the smaller intestinal cells absorb some of these nutrients, allowing for the absorption.\nThe reason that this is so often overlooked is because the gut is known to be a complex organ, responsible for both the absorption and absorption of nutrients. The body therefore has to make large and potent dietary changes to help it maintain its nutritional balance in the form of nutrient-rich foods and supplements that are usually kept out of the large intestine, often from toxins or other foreign substances, or in places such as the stomach and the small intestines",
+     " a number of genes related to stem cells that help to transform the immune system (and thus prevent tumors from developing in mice) seem to be in the news.\n\u201cIt\u2019s now clear that there are a lot of new ways to use stem cells in treating diseases such as cancer or organ inflammation, as well as in helping people with type 1 diabetes (the precursor to diabetes is currently a human immunodeficiency virus, which causes the pancreas cells to produce insulin to release insulin inside it and so to make insulin for the body to use to keep it in the body,"
+    ],
+    "resampled": [
+     " the immune system plays a big role when it\u2019s not working properly. This article\u2019s other articles on inflammation are:\n- What is inflammatory cytokinesis? (Part 1) \u2013 What diseases are inflammatory cytokines?\n- How is inflammation affecting immunity? \u2013 What is inflammation?\n- How does inflammation affect immune function? \u2013 How is inflammation related to inflammation?\n- How are inflammation affects immunity? and how are inflammation affects immunity? \u2013 What is inflammation? and how does a cytokine impact immunity?\n- What is inflammation and how is chronic inflammation affecting immunity?",
+     " a group of bacteria that are capable of triggering the abnormal protein called ER-2. The enzyme \u2013 dubbed ER-2-like \u2013 is thought to have originated at the ER-2 site within cells that we now know nothing about. Their discovery is important because it has allowed the discovery of previously unknown regulatory molecules called ERs2. \u201cWe have now started to test for these genes and we are now taking a closer look at many different proteins and proteins,\u201d Dr Wang said from the University of Illinois in Chicago and Dr. Robert He et al. \u201cWe have discovered a new"
+    ]
+   }
+  }
+ }
+}

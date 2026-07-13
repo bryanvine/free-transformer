@@ -1,0 +1,210 @@
+{
+ "ckpt": "runs/dev_free_k0.5_s1/best.pt",
+ "H": 16,
+ "kappa_bits": 0.5,
+ "bit_stats": {
+  "mean_p": [
+   0.4998887777328491,
+   0.49972739815711975,
+   0.5005094408988953,
+   0.500042736530304,
+   0.49993082880973816,
+   0.5002654790878296,
+   0.5163286328315735,
+   0.49888601899147034,
+   0.500724732875824,
+   0.49988412857055664,
+   0.4994761645793915,
+   0.49985894560813904,
+   0.5004584789276123,
+   0.5004035234451294,
+   0.4995898902416229,
+   0.5012529492378235
+  ],
+  "hardness": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "kl_bits": [
+   2.0632166979339672e-06,
+   2.3369623249891447e-06,
+   2.4420145564363338e-05,
+   4.301356966607273e-06,
+   4.422994152264437e-06,
+   3.6482476843957556e-06,
+   0.47964683175086975,
+   1.6474705262226053e-05,
+   2.9824259399902076e-06,
+   2.0788913843716728e-06,
+   1.265743685507914e-05,
+   9.177913852909114e-06,
+   7.974991603987291e-06,
+   1.2129581591580063e-05,
+   4.059967523062369e-06,
+   2.2302796423900872e-05
+  ],
+  "temporal_coherence": [
+   0.7031351923942566,
+   0.6893142461776733,
+   0.694716215133667,
+   0.6958985924720764,
+   0.6900684833526611,
+   0.6928611993789673,
+   0.6935135126113892,
+   0.6819349527359009,
+   0.8875978589057922,
+   0.680834174156189,
+   0.6908023357391357,
+   0.6915158033370972,
+   0.6857672929763794,
+   0.6908838748931885,
+   0.6907004117965698,
+   0.6785510182380676
+  ]
+ },
+ "bit_feature_corr": {
+  "position": [
+   -0.010928008163803987,
+   -0.007591420011093652,
+   -0.0025434657182276063,
+   -0.002886041904724631,
+   -0.004268879156330307,
+   0.004616424243631511,
+   -0.0013668398274250288,
+   -0.008699468015137227,
+   0.012372625094610313,
+   -0.010381997952342155,
+   0.005787276706896245,
+   -0.007195390894148902,
+   0.004559534164094791,
+   -0.00012483333976611217,
+   -0.010504976368279878,
+   0.012099486256758664
+  ],
+  "starts_space": [
+   -0.024311316225321365,
+   0.035805117113886446,
+   -0.0482882970086276,
+   0.04562372272165601,
+   0.043629229715645854,
+   0.05039644486423953,
+   0.046717061662222406,
+   0.023401806668668576,
+   -0.006993557586286642,
+   -0.059156861828031544,
+   0.05217659272247831,
+   -0.05228941143516682,
+   -0.03893616976030123,
+   -0.048826795143383755,
+   -0.055396368283405314,
+   -0.011087629071801301
+  ],
+  "is_alpha": [
+   -0.033644621275509136,
+   0.028589360772526048,
+   -0.03763808195916039,
+   0.03734753449066668,
+   0.03468237730097521,
+   0.04002423586131499,
+   0.03626037577410719,
+   0.014438721861513163,
+   -8.741543207123997e-05,
+   -0.05224425063046388,
+   0.04139024397666223,
+   -0.042126952295792615,
+   -0.029587379748357127,
+   -0.0382130495059643,
+   -0.04572757311719226,
+   -0.00021291133858169885
+  ],
+  "is_break": [
+   0.03912762087922587,
+   -0.034916387996750044,
+   0.04368545570938488,
+   -0.042407340208943614,
+   -0.0404415340718858,
+   -0.04599809187502414,
+   -0.04256822873647971,
+   -0.021297609256116373,
+   -0.0012642626391537696,
+   0.05702446069332099,
+   -0.047416372051547584,
+   0.04817869245483308,
+   0.03617173760522587,
+   0.04447460841615165,
+   0.05141045022408851,
+   0.00892471843419971
+  ]
+ },
+ "ablation": {
+  "base_ce_posterior_bits": 1.0703407227993011,
+  "delta_ce_per_bit": [
+   -0.0021158456802368164,
+   -0.004968047142028809,
+   -0.004250645637512207,
+   -0.0021518468856811523,
+   -0.0004718303680419922,
+   -0.004900693893432617,
+   0.4588814973831177,
+   -0.0022014379501342773,
+   -0.0047016143798828125,
+   -0.005116820335388184,
+   -0.0009478330612182617,
+   -0.002275228500366211,
+   -0.005036473274230957,
+   -0.007964015007019043,
+   -0.002282261848449707,
+   0.000605463981628418
+  ]
+ },
+ "steering": {
+  "intra_pattern_jaccard3_mean": 0.0035807571611291664,
+  "inter_pattern_jaccard3_mean": 0.004424151069453591,
+  "n_intra_pairs": 18,
+  "n_inter_pairs": 54,
+  "examples": {
+   "The most important thing to understand about": {
+    "fixed_pattern0": [
+     ". Even if it seems boring, it's important to be curious and to learn about the world around us. You can learn to be respectful of nature, even with delicate things. Don't be afraid to try new things, even if they seem boring or boring.<|endoftext|>Once upon a time there was a tall building. Inside the building was a secret place. Inside it was a secret place filled with",
+     " this and to understand.<|endoftext|>Once there was a little girl. She loved to play with her toys. One day she really wanted to play with them, so she said to her mom, \"No, I want to do it by myself. It is my new toy and I want to keep it.\" Her mom shook her head, \"No, you can't keep it. It belongs to the"
+    ],
+    "fixed_pattern1": [
+     " the world around her, so she decided to go for a jog. When she got there, she stopped to listen to the birds chirping and the trees rustling. And by the time she was going, she could see the world around her as she jogged. She saw lots of different things like animals and plants. She was so excited that she started to explore the world around her.",
+     " and asked her mom why she usually do it before she asked her mom to explain. Her mom thought for a moment and then she said, \"It will be a very important lesson to not study today. If you take your time and study, you will find your way. If you never find your way, you might get lost and lose your balance. You must go to explore the world, but"
+    ],
+    "resampled": [
+     " the big tree grew up there.<|endoftext|>Once upon a time there was a grumpy little girl. She was playing in her garden one day when she noticed the soil. It was a bit old and not as smooth as the old. She decided to try and make her garden even better!\n\nShe worked and worked, making sure the soil was just right. She worked hard, and she was",
+     " the different types of ants on a high pole. \n\nThe brave little girl smiled as she watched the ants. She was filled with wonder at all of the different kinds of ants. \n\nThe little girl was so proud of her artwork and from then on, she was the happiest little girl in the world.<|endoftext|>Once there was a little girl who loved animals. Every day she and"
+    ]
+   },
+   "In this tutorial, we will learn how to": {
+    "fixed_pattern0": [
+     " get the ball back.\"<|endoftext|>Lily loved to dance. She danced when she was happy, when she was sad, when she danced. She danced very well, and danced at home. She danced and clapped her hands.\n\nOne day, her mom took her to the park. They saw many other children and smiles. Lily saw a girl with a hat and a smile. She wanted",
+     " use it properly.<|endoftext|>Lily had a new doll. It was a doll with a pink dress. Lily loved her doll very much. She liked to hug her and sing to her. She showed the doll her dress and said, \"Look, this is a doll. It has a pretty dress and a dress.\"\n\nOne day, Lily took the doll outside. She wanted to play with"
+    ],
+    "fixed_pattern1": [
+     " make things better. We are sorry we took the box. We will share and take turns. We will learn from our mistakes. We will share and be honest. We will care for things. We will not pull things. We will play with something else.\"\n\nThey go to the box and open it. They find a new box. They open it and look inside. They see a lot",
+     " read books, but we have to respect the animals and the land. We need to find a way to make it better.\"\n\nThey learn a lesson that day. They learn to be careful with books and follow people who know how to read. They also learn to respect and respect nature and to respect the people. They hope the animals will learn to understand and learn. They hope to learn more"
+    ],
+    "resampled": [
+     " read the words with the words. If we want to do the same, we will read them together. It is a fun story. Come on, let's read the words together.\"\n\nThey all sat down and opened the book. They read the words to the words and learned the words. The words showed them some words and how to say them.\n\n\"Wow, you are very",
+     " play better than you.\"\n\nLily and Ben felt scared. They did not want to be in trouble. They thought their parent would hurt them if they left the hole. They hugged their parent and sobbed.\n\n\"Are you okay? Don't you know how to behave?\" their parent asked.\n\n\"We are sorry. We did not mean to. We will be good"
+    ]
+   }
+  }
+ }
+}
